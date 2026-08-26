@@ -5,6 +5,8 @@
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    color: #333;
+    display: block !important;
 }
 
 #partitur-section h2 {
@@ -64,6 +66,7 @@
     border-radius: 5px;
     resize: vertical;
     color: #000;
+    background: #fff;
 }
 
 .partitur-actions {
