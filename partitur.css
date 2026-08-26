@@ -23,6 +23,7 @@
 
 .partitur-controls label {
     font-weight: bold;
+    color: #333;
 }
 
 .partitur-controls select, 
@@ -62,6 +63,7 @@
     border: 2px solid #ccc;
     border-radius: 5px;
     resize: vertical;
+    color: #000;
 }
 
 .partitur-actions {
