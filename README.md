@@ -10,11 +10,11 @@ https://img.shields.io/badge/License-MIT-green
 
 ---
 
-Akses aplikasi di: https://srpakpahansst.github.io/pmd-musik-12tet/
+Akses aplikasi di: https://srpakpahansst.github.io/Musik-Baru-12-TET/
 
 Tempelkan URL Link Aplikasi ke Browser Anda. Jangan langsung URL di klik karena nanti tidak bisa membuka Tombol "Mulai"
 
-https://srpakpahansst.github.io/pmd-musik-12tet/
+https://srpakpahansst.github.io/Musik-Baru-12-TET/
 
 📖 Tentang Aplikasi
 
@@ -124,7 +124,7 @@ Interval: 1 - 1 - 1 - ½ - 1 - 1 - 1 - 1 - ½ - 1 - 1
 
 Online (GitHub Pages)
 
-Akses aplikasi di: https://srpakpahansst.github.io/pmd-musik-12tet/
+Akses aplikasi di: https://srpakpahansst.github.io/Musik-Baru-12-TET/
 
 Lokal
 
