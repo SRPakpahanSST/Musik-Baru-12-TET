@@ -24,11 +24,57 @@ async function loadPartiturHTML() {
 }
 
 // ================================================================
-// LOGIKA PARTITUR
+// KONSTANTA SISTEM 12-TET 20 NADA (Sesuai PMD Musik)
 // ================================================================
+const NOTES_20 = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
+
+// Interval Skala Mayor (E=1) dan Minor (A=1)
+const MAYOR_INTERVALS_20 = [2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1];
+const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
+
 let akordList = [];
 
-// Inisialisasi event setelah HTML dimuat
+// ================================================================
+// FUNGSI DASAR 20 NADA
+// ================================================================
+
+// Fungsi untuk menghasilkan skala 20 nada
+function generateScale(nadaDasar, mayorMinor) {
+    const rootIdx = NOTES_20.indexOf(nadaDasar);
+    if (rootIdx === -1) return [];
+    
+    const intervals = mayorMinor === "mayor" ? MAYOR_INTERVALS_20 : MINOR_INTERVALS_20;
+    let scale = [NOTES_20[rootIdx]];
+    let currentIndex = rootIdx;
+    
+    for (let interval of intervals) {
+        currentIndex = (currentIndex + interval) % 20;
+        scale.push(NOTES_20[currentIndex]);
+    }
+    
+    // Ambil 7 nada utama untuk membentuk akord
+    return scale.slice(0, 7);
+}
+
+// Fungsi untuk membentuk akord triad dalam sistem 20 nada
+function buildChord20(rootName, type) {
+    const rootIdx = NOTES_20.indexOf(rootName);
+    if (rootIdx === -1) return [];
+    
+    let third = 4;  // Mayor third (interval 4)
+    let fifth = 7;  // Perfect fifth (interval 7)
+    
+    if (type === 'minor') third = 3;
+    if (type === 'diminished') { third = 3; fifth = 6; }
+
+    const thirdName = NOTES_20[(rootIdx + third) % 20];
+    const fifthName = NOTES_20[(rootIdx + fifth) % 20];
+    return [rootName, thirdName, fifthName];
+}
+
+// ================================================================
+// INISIALISASI EVENT SETELAH HTML DIMUAT
+// ================================================================
 function initPartiturEvents() {
     // Event listener untuk tombol tampilkan akord
     const tampilkanBtn = document.getElementById('tampilkan-akord');
@@ -38,11 +84,26 @@ function initPartiturEvents() {
             const mayorMinor = document.getElementById('mayor-minor').value;
             
             const skala = generateScale(nadaDasar, mayorMinor);
-            const progresi = mayorMinor === "mayor" ? ["", "m", "m", "", "", "m", "dim"] : ["m", "dim", "", "m", "m", "", ""];
+            
+            // Progresi akord sesuai skala Mayor/Minor 20 nada
+            let progresi = [];
+            if (mayorMinor === 'mayor') {
+                progresi = ["", "m", "m", "", "", "m", "dim"];
+            } else {
+                progresi = ["m", "dim", "", "m", "m", "", ""];
+            }
             
             akordList = [];
-            for (let i = 0; i < skala.length - 1; i++) {
-                akordList.push(skala[i] + progresi[i]);
+            for (let i = 0; i < skala.length; i++) {
+                const chordType = progresi[i];
+                const chordNotes = buildChord20(skala[i], chordType);
+                
+                // Format nama akord (contoh: E, Em, Edim)
+                let akordName = chordNotes[0];
+                if (chordType === 'minor') akordName += 'm';
+                if (chordType === 'diminished') akordName += '°';
+                
+                akordList.push(akordName);
             }
             
             const selectAkord = document.getElementById('pilih-akord');
@@ -71,6 +132,10 @@ function initPartiturEvents() {
     }
 }
 
+// ================================================================
+// FUNGSI EDIT PARTITUR
+// ================================================================
+
 // Fungsi untuk menyisipkan simbol ke textarea
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
@@ -81,26 +146,6 @@ function insertSymbol(symbol) {
     area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
     area.focus();
     area.setSelectionRange(start + symbol.length, start + symbol.length);
-}
-
-// Fungsi untuk menghasilkan skala Mayor/Minor
-function generateScale(nadaDasar, mayorMinor) {
-    const allNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-    const mayorIntervals = [2, 2, 1, 2, 2, 2, 1];
-    const minorIntervals = [2, 1, 2, 2, 1, 2, 2];
-    
-    const intervals = mayorMinor === "mayor" ? mayorIntervals : minorIntervals;
-    const startIndex = allNotes.indexOf(nadaDasar);
-    
-    let scale = [allNotes[startIndex]];
-    let currentIndex = startIndex;
-    
-    for (let interval of intervals) {
-        currentIndex = (currentIndex + interval) % allNotes.length;
-        scale.push(allNotes[currentIndex]);
-    }
-    
-    return scale;
 }
 
 // Fungsi untuk menyimpan partitur ke localStorage
