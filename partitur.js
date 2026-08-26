@@ -9,8 +9,6 @@ async function loadPartiturHTML() {
         
         if (container) {
             container.innerHTML = html;
-            
-            // Panggil init setelah HTML dimuat
             initPartiturEvents();
         } else {
             console.error('Container #partitur-container tidak ditemukan!');
@@ -25,7 +23,7 @@ async function loadPartiturHTML() {
 }
 
 // ================================================================
-// KONSTANTA 20 NADA
+// KONSTANTA 20 NADA (Versi Sederhana)
 // ================================================================
 const NOTES_20 = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
 const MAYOR_INTERVALS_20 = [2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1];
@@ -33,7 +31,6 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 
 let akordList = [];
 
-// Fungsi skala
 function generateScale(nadaDasar, mayorMinor) {
     const rootIdx = NOTES_20.indexOf(nadaDasar);
     if (rootIdx === -1) return [];
@@ -49,7 +46,6 @@ function generateScale(nadaDasar, mayorMinor) {
     return scale.slice(0, 7);
 }
 
-// Fungsi akord
 function buildChord20(rootName, type) {
     const rootIdx = NOTES_20.indexOf(rootName);
     if (rootIdx === -1) return [];
@@ -62,7 +58,6 @@ function buildChord20(rootName, type) {
     return [NOTES_20[rootIdx], NOTES_20[(rootIdx + third) % 20], NOTES_20[(rootIdx + fifth) % 20]];
 }
 
-// Inisialisasi event
 function initPartiturEvents() {
     const tampilkanBtn = document.getElementById('tampilkan-akord');
     if (tampilkanBtn) {
@@ -106,11 +101,9 @@ function initPartiturEvents() {
     }
 }
 
-// Fungsi simbol
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
     if (!area) return;
-    
     const start = area.selectionStart;
     const end = area.selectionEnd;
     area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
@@ -118,14 +111,12 @@ function insertSymbol(symbol) {
     area.setSelectionRange(start + symbol.length, start + symbol.length);
 }
 
-// Simpan
 function simpanPartitur() {
     const partitur = document.getElementById('partitur-area').value;
     localStorage.setItem('partiturNotasiAngka', partitur);
     tampilkanPesan("Partitur berhasil disimpan!", "green");
 }
 
-// Buka
 function bukaPartitur() {
     const partitur = localStorage.getItem('partiturNotasiAngka');
     if (partitur) {
@@ -136,16 +127,15 @@ function bukaPartitur() {
     }
 }
 
-// Cetak
 function cetakPartitur() {
-    const partiturText = document.getElementById('partitur-area').value;
+    const area = document.getElementById('partitur-area');
+    const partiturText = area.value;
     const printWindow = window.open('', '_blank');
     printWindow.document.write('<pre style="font-size: 16px; font-family: Courier New;">' + partiturText.replace(/</g, '&lt;') + '</pre>');
     printWindow.document.close();
     printWindow.print();
 }
 
-// Bersihkan
 function bersihkanPartitur() {
     if (confirm("Yakin ingin menghapus semua isi partitur?")) {
         document.getElementById('partitur-area').value = '';
@@ -153,7 +143,6 @@ function bersihkanPartitur() {
     }
 }
 
-// Pesan Status
 function tampilkanPesan(msg, warna) {
     const statusDiv = document.getElementById('status-message');
     if (!statusDiv) return;
@@ -162,5 +151,4 @@ function tampilkanPesan(msg, warna) {
     setTimeout(() => { statusDiv.textContent = ""; }, 3000);
 }
 
-// Jalankan saat DOM siap
 document.addEventListener('DOMContentLoaded', loadPartiturHTML);
