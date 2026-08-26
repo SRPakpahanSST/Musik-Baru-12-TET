@@ -55,14 +55,16 @@
         <button onclick="insertSymbol(':||')" title="Repeat akhir">:||</button>
         <button onclick="insertSymbol('/')" title="Slur / legato">/</button>
         <button onclick="insertSymbol('\\')" title="Slur terbalik">\</button>
-        <button onclick="insertSymbol("'")" title="Tanda aksen">'</button>
+        
+        <!-- Perbaikan di sini: Gunakan backslash untuk escape tanda kutip -->
+        <button onclick="insertSymbol(&quot;'&quot;)" title="Tanda aksen">'</button>
 
         <!-- Nada & Istirahat -->
         <button onclick="insertSymbol('0')" title="Nada diam (rest)">0</button>
         <button onclick="insertSymbol('♯')" title="Kruis (Sharp)">♯</button>
         <button onclick="insertSymbol('♭')" title="Mol (Flat)">♭</button>
         
-        <!-- Simbol Panjang Nada (1, 2, 3 ketuk) & Karakter Khusus -->
+        <!-- Simbol Panjang Nada & Karakter Khusus -->
         <button onclick="insertSymbol('⌣')" title="Nada panjang 1 ketuk">⌣</button>
         <button onclick="insertSymbol('̅')" title="Garis di atas (Tie/Slur)">̅</button>
         <button onclick="insertSymbol('࠘')" title="Simbol ritme kuno 1">࠘</button>
@@ -73,10 +75,8 @@
         <button onclick="insertSymbol('ᤘ')" title="Simbol ritme kuno 6">ᤘ</button>
         <button onclick="insertSymbol('̈')" title="Tanda ulang not (trill)">̈</button>
         <button onclick="insertSymbol('᳟')" title="Simbol aksen kuno">᳟</button>
-        <button onclick="insertSymbol('♭')" title="Mol (Flat)">♭</button>
         <button onclick="insertSymbol('‿')" title="Ligature (Legato bawah)">‿</button>
         <button onclick="insertSymbol('〢')" title="Simbol garis ganda">〢</button>
-        <button onclick="insertSymbol('▕')" title="Garis vertikal tebal">▕</button>
         <button onclick="insertSymbol('▕')" title="Garis vertikal tebal">▕</button>
         <button onclick="insertSymbol('ࠡ')" title="Simbol aksen vertikal">ࠡ</button>
         <button onclick="insertSymbol('↑')" title="Nada naik (Ascending)">↑</button>
