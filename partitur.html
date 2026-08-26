@@ -42,45 +42,31 @@
         </select>
     </div>
 
-    <!-- Tombol Simbol Notasi (Lengkap - 30 Simbol) -->
+    <!-- Tombol Simbol Notasi (Diperbanyak) -->
     <div class="symbol-palette">
-        <!-- Oktaf Tinggi (Titik di atas) -->
-        <button onclick="insertSymbol('•')" title="Titik (Oktaf tinggi 1)">•</button>
-        <button onclick="insertSymbol('••')" title="Dua titik (Oktaf tinggi 2)">••</button>
-        <button onclick="insertSymbol('•••')" title="Tiga titik (Oktaf tinggi 3)">•••</button>
-
-        <!-- Garis & Birama -->
+        <button onclick="insertSymbol('•')" title="Titik (staccato)">•</button>
+        <button onclick="insertSymbol('••')" title="Dua titik">••</button>
         <button onclick="insertSymbol('|')" title="Garis birama">|</button>
-        <button onclick="insertSymbol('‖')" title="Garis birama ganda (Double bar)">‖</button>
-        <button onclick="insertSymbol(':||')" title="Repeat akhir">:||</button>
         <button onclick="insertSymbol('/')" title="Slur / legato">/</button>
         <button onclick="insertSymbol('\\')" title="Slur terbalik">\</button>
-        
-        <!-- Perbaikan di sini: Gunakan backslash untuk escape tanda kutip -->
-        <button onclick="insertSymbol(&quot;'&quot;)" title="Tanda aksen">'</button>
-
-        <!-- Nada & Istirahat -->
         <button onclick="insertSymbol('0')" title="Nada diam (rest)">0</button>
         <button onclick="insertSymbol('♯')" title="Kruis (Sharp)">♯</button>
         <button onclick="insertSymbol('♭')" title="Mol (Flat)">♭</button>
         
-        <!-- Simbol Panjang Nada & Karakter Khusus -->
-        <button onclick="insertSymbol('⌣')" title="Nada panjang 1 ketuk">⌣</button>
-        <button onclick="insertSymbol('̅')" title="Garis di atas (Tie/Slur)">̅</button>
-        <button onclick="insertSymbol('࠘')" title="Simbol ritme kuno 1">࠘</button>
-        <button onclick="insertSymbol('߫')" title="Simbol ritme kuno 2">߫</button>
-        <button onclick="insertSymbol('ᅞ')" title="Simbol ritme kuno 3">ᅞ</button>
-        <button onclick="insertSymbol('ᅟ')" title="Simbol ritme kuno 4">ᅟ</button>
-        <button onclick="insertSymbol('ᅝ')" title="Simbol ritme kuno 5">ᅝ</button>
-        <button onclick="insertSymbol('ᤘ')" title="Simbol ritme kuno 6">ᤘ</button>
-        <button onclick="insertSymbol('̈')" title="Tanda ulang not (trill)">̈</button>
-        <button onclick="insertSymbol('᳟')" title="Simbol aksen kuno">᳟</button>
-        <button onclick="insertSymbol('‿')" title="Ligature (Legato bawah)">‿</button>
-        <button onclick="insertSymbol('〢')" title="Simbol garis ganda">〢</button>
-        <button onclick="insertSymbol('▕')" title="Garis vertikal tebal">▕</button>
-        <button onclick="insertSymbol('ࠡ')" title="Simbol aksen vertikal">ࠡ</button>
-        <button onclick="insertSymbol('↑')" title="Nada naik (Ascending)">↑</button>
-        <button onclick="insertSymbol('↓')" title="Nada turun (Descending)">↓</button>
+        <!-- Simbol untuk Oktaf Tinggi (Garis 1 & 2) -->
+        <button onclick="insertSymbol('‾')" title="Garis satu di atas (Oktaf tinggi)">‾</button>
+        <button onclick="insertSymbol('‾‾')" title="Garis dua di atas (Oktaf paling tinggi)">‾‾</button>
+        <button onclick="insertSymbol('•‾')" title="Titik dan garis satu">•‾</button>
+        
+        <!-- Simbol Tambahan -->
+        <button onclick="insertSymbol('♩')" title="Not seperempat">♩</button>
+        <button onclick="insertSymbol('♪')" title="Not seperdelapan">♪</button>
+        <button onclick="insertSymbol('♫')" title="Not seperenam belas">♫</button>
+        <button onclick="insertSymbol('𝄐')" title="Fermata">𝄐</button>
+        <button onclick="insertSymbol('𝄆')" title="Repeat Awal">𝄆</button>
+        <button onclick="insertSymbol('𝄇')" title="Repeat Akhir">𝄇</button>
+        <button onclick="insertSymbol('𝄞')" title="Treble Clef">𝄞</button>
+        <button onclick="insertSymbol('𝄢')" title="Bass Clef">𝄢</button>
     </div>
 
     <!-- Area Partitur -->
