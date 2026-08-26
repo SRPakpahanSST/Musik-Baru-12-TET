@@ -1,8 +1,8 @@
 <!-- ====== BAGIAN PARTITUR NOTASI ANGKA ====== -->
-<section id="partitur-section" style="display: block;">
+<section id="partitur-section">
     <h2>Partitur Notasi Angka</h2>
     
-    <div class="partitur-controls">
+    <div>
         <label>Nada Dasar:</label>
         <select id="nada-dasar">
             <option value="E">E</option>
@@ -16,24 +16,16 @@
         </select>
 
         <button id="tampilkan-akord">Tampilkan Akord</button>
+        
         <select id="pilih-akord" disabled>
             <option value="">-- Pilih Akord --</option>
         </select>
     </div>
 
-    <!-- Tombol Simbol (Basic) -->
-    <div class="symbol-palette">
-        <button onclick="insertSymbol('•')">•</button>
-        <button onclick="insertSymbol('|')">|</button>
-        <button onclick="insertSymbol('0')">0</button>
-        <button onclick="insertSymbol('♯')">♯</button>
-        <button onclick="insertSymbol('♭')">♭</button>
-    </div>
+    <!-- Area Partitur (TANPA tombol simbol dulu) -->
+    <textarea id="partitur-area" placeholder="Tulis partitur di sini..." style="width:100%; height:300px;"></textarea>
 
-    <!-- Area Partitur -->
-    <textarea id="partitur-area" placeholder="Tulis partitur di sini..."></textarea>
-
-    <div class="partitur-actions">
+    <div style="margin-top:10px;">
         <button onclick="simpanPartitur()">Simpan</button>
         <button onclick="bukaPartitur()">Buka</button>
         <button onclick="cetakPartitur()">Cetak</button>
