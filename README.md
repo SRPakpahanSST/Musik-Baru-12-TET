@@ -1,6 +1,6 @@
-# pmd-musik-12tet
+# Musik Baru-12tet
 
-🎵 PMD Musik 12 TET
+🎵 PMD Musik Baru 12 TET
 
 Pedang Mata Dua Musik Digital — Eksplorasi Mikrotonal 20 Nada per Oktaf
 
