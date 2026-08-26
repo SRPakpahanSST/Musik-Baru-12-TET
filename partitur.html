@@ -1,36 +1,60 @@
 <!-- ====== BAGIAN PARTITUR NOTASI ANGKA ====== -->
 <section id="partitur-section">
     <h2>Partitur Notasi Angka</h2>
-    
-    <div>
+
+    <!-- Kontrol Nada Dasar dan Akord -->
+    <div class="partitur-controls">
         <label>Nada Dasar:</label>
         <select id="nada-dasar">
+            <option value="C">C</option>
+            <option value="C#">C#</option>
+            <option value="D">D</option>
+            <option value="D#">D#</option>
             <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#</option>
+            <option value="G">G</option>
+            <option value="G#">G#</option>
             <option value="A">A</option>
+            <option value="A#">A#</option>
+            <option value="B">B</option>
         </select>
 
-        <label>Skala:</label>
+        <label>Mayor/Minor:</label>
         <select id="mayor-minor">
             <option value="mayor">Mayor</option>
             <option value="minor">Minor</option>
         </select>
 
         <button id="tampilkan-akord">Tampilkan Akord</button>
-        
         <select id="pilih-akord" disabled>
             <option value="">-- Pilih Akord --</option>
         </select>
     </div>
 
-    <!-- Area Partitur (TANPA tombol simbol dulu) -->
-    <textarea id="partitur-area" placeholder="Tulis partitur di sini..." style="width:100%; height:300px;"></textarea>
-
-    <div style="margin-top:10px;">
-        <button onclick="simpanPartitur()">Simpan</button>
-        <button onclick="bukaPartitur()">Buka</button>
-        <button onclick="cetakPartitur()">Cetak</button>
-        <button onclick="bersihkanPartitur()">Bersihkan</button>
+    <!-- Tombol Simbol Notasi -->
+    <div class="symbol-palette">
+        <button onclick="insertSymbol('•')">•</button>
+        <button onclick="insertSymbol('••')">••</button>
+        <button onclick="insertSymbol('|')">|</button>
+        <button onclick="insertSymbol('/')">/</button>
+        <button onclick="insertSymbol('0')">0</button>
+        <button onclick="insertSymbol('♯')">♯</button>
+        <button onclick="insertSymbol('♭')">♭</button>
+        <!-- Tambahkan simbol lainnya sesuai kebutuhan -->
     </div>
 
+    <!-- Area Partitur -->
+    <textarea id="partitur-area" placeholder="Tulis partitur notasi angka di sini..."></textarea>
+
+    <!-- Tombol Aksi -->
+    <div class="partitur-actions">
+        <button onclick="simpanPartitur()">💾 Simpan</button>
+        <button onclick="bukaPartitur()">📂 Buka</button>
+        <button onclick="cetakPartitur()">🖨️ Cetak</button>
+        <button onclick="bersihkanPartitur()">🗑️ Bersihkan</button>
+    </div>
+
+    <!-- Pesan Status -->
     <div id="status-message"></div>
 </section>
