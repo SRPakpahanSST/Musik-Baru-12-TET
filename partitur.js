@@ -8,9 +8,10 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// INISIALISASI EVENT SETELAH HTML DITANAM
+// INISIALISASI EVENT (TANPA DOMContentLoaded - LANGSUNG JALAN)
 // ================================================================
 function initPartiturEvents() {
+    // 1. Tombol Tampilkan Akord
     const tampilkanBtn = document.getElementById('tampilkan-akord');
     if (tampilkanBtn) {
         tampilkanBtn.addEventListener('click', function() {
@@ -43,6 +44,7 @@ function initPartiturEvents() {
         });
     }
 
+    // 2. Dropdown Pilih Akord
     const pilihAkord = document.getElementById('pilih-akord');
     if (pilihAkord) {
         pilihAkord.addEventListener('change', function() {
@@ -84,16 +86,18 @@ function buildChord20(rootName, type) {
 }
 
 // ================================================================
-// FUNGSI EDIT PARTITUR (PASTIKAN BEKERJA)
+// FUNGSI EDIT PARTITUR
 // ================================================================
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
     if (!area) return;
     
+    // PASTIKAN KURSOR BERADA DI TEXTAREA
+    area.focus();
+    
     const start = area.selectionStart;
     const end = area.selectionEnd;
     area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
-    area.focus();
     area.setSelectionRange(start + symbol.length, start + symbol.length);
 }
 
@@ -142,8 +146,6 @@ function tampilkanPesan(msg, warna) {
 }
 
 // ================================================================
-// JALANKAN SAAT DOM SIAP
+// JALANKAN LANGSUNG SAAT FILE DIMUAT (Script di akhir body)
 // ================================================================
-document.addEventListener('DOMContentLoaded', function() {
-    initPartiturEvents();
-});
+initPartiturEvents();
