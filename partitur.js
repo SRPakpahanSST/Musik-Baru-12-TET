@@ -1,27 +1,3 @@
-// Fungsi untuk memuat file HTML eksternal ke dalam container
-async function loadPartiturHTML() {
-    try {
-        const response = await fetch('partitur.html');
-        if (!response.ok) throw new Error('partitur.html tidak ditemukan');
-        
-        const html = await response.text();
-        const container = document.getElementById('partitur-container');
-        
-        if (container) {
-            container.innerHTML = html;
-            initPartiturEvents(); // Inisialisasi event setelah HTML dimuat
-        } else {
-            console.error('Container #partitur-container tidak ditemukan!');
-        }
-    } catch (error) {
-        console.error('Gagal memuat partitur:', error);
-        const container = document.getElementById('partitur-container');
-        if (container) {
-            container.innerHTML = '<p style="color:red; text-align:center;">⚠️ Gagal memuat partitur. Pastikan file partitur.html ada.</p>';
-        }
-    }
-}
-
 // ================================================================
 // KONSTANTA SISTEM 12-TET 20 NADA
 // ================================================================
@@ -32,38 +8,106 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// FUNGSI DASAR 20 NADA
+// RENDER HTML PARTITUR LANGSUNG (TANPA FETCH - DIJAMIN TAMPIL)
 // ================================================================
+function renderPartiturHTML() {
+    const container = document.getElementById('partitur-container');
+    if (!container) return;
 
-function generateScale(nadaDasar, mayorMinor) {
-    const rootIdx = NOTES_20.indexOf(nadaDasar);
-    if (rootIdx === -1) return [];
-    
-    const intervals = mayorMinor === "mayor" ? MAYOR_INTERVALS_20 : MINOR_INTERVALS_20;
-    let scale = [NOTES_20[rootIdx]];
-    let currentIndex = rootIdx;
-    
-    for (let interval of intervals) {
-        currentIndex = (currentIndex + interval) % 20;
-        scale.push(NOTES_20[currentIndex]);
-    }
-    return scale.slice(0, 7);
+    // HTML Partitur Lengkap (Tanpa perlu file partitur.html)
+    container.innerHTML = `
+        <div id="partitur-section">
+            <h2>Partitur Notasi Angka (Sistem 12-TET 20 Nada)</h2>
+            
+            <div class="partitur-controls">
+                <label>Nada Dasar:</label>
+                <select id="nada-dasar">
+                    <option value="E">E (Do Mayor)</option>
+                    <option value="E#">E#</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="H">H</option>
+                    <option value="H#">H#</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                    <option value="J#">J#</option>
+                    <option value="K">K</option>
+                    <option value="K#">K#</option>
+                    <option value="A">A (Do Minor)</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                    <option value="B#">B#</option>
+                    <option value="C">C</option>
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                </select>
+
+                <label>Skala:</label>
+                <select id="mayor-minor">
+                    <option value="mayor">Mayor (E=1)</option>
+                    <option value="minor">Minor (A=1)</option>
+                </select>
+
+                <button id="tampilkan-akord">Tampilkan Akord</button>
+                
+                <label>Pilih Akord:</label>
+                <select id="pilih-akord" disabled>
+                    <option value="">-- Pilih Akord --</option>
+                </select>
+            </div>
+
+            <!-- Tombol Simbol Notasi -->
+            <div class="symbol-palette">
+                <button onclick="insertSymbol('•')">•</button>
+                <button onclick="insertSymbol('••')">••</button>
+                <button onclick="insertSymbol('•••')">•••</button>
+                <button onclick="insertSymbol('|')">|</button>
+                <button onclick="insertSymbol('‖')">‖</button>
+                <button onclick="insertSymbol(':||')">:||</button>
+                <button onclick="insertSymbol('/')">/</button>
+                <button onclick="insertSymbol('\\')">\</button>
+                <button onclick="insertSymbol('0')">0</button>
+                <button onclick="insertSymbol('♯')">♯</button>
+                <button onclick="insertSymbol('♭')">♭</button>
+                <button onclick="insertSymbol('⌣')">⌣</button>
+                <button onclick="insertSymbol('̅')">̅</button>
+                <button onclick="insertSymbol('࠘')">࠘</button>
+                <button onclick="insertSymbol('߫')">߫</button>
+                <button onclick="insertSymbol('ᅞ')">ᅞ</button>
+                <button onclick="insertSymbol('ᅟ')">ᅟ</button>
+                <button onclick="insertSymbol('ᅝ')">ᅝ</button>
+                <button onclick="insertSymbol('ᤘ')">ᤘ</button>
+                <button onclick="insertSymbol('̈')">̈</button>
+                <button onclick="insertSymbol('᳟')">᳟</button>
+                <button onclick="insertSymbol('‿')">‿</button>
+                <button onclick="insertSymbol('〢')">〢</button>
+                <button onclick="insertSymbol('▕')">▕</button>
+                <button onclick="insertSymbol('ࠡ')">ࠡ</button>
+                <button onclick="insertSymbol('↑')">↑</button>
+                <button onclick="insertSymbol('↓')">↓</button>
+            </div>
+
+            <textarea id="partitur-area" placeholder="Tulis partitur notasi angka di sini..."></textarea>
+
+            <div class="partitur-actions">
+                <button onclick="simpanPartitur()">💾 Simpan</button>
+                <button onclick="bukaPartitur()">📂 Buka</button>
+                <button onclick="cetakPartitur()">🖨️ Cetak</button>
+                <button onclick="bersihkanPartitur()">🗑️ Bersihkan</button>
+            </div>
+
+            <div id="status-message"></div>
+        </div>
+    `;
+
+    // Panggil event setelah HTML dirender
+    initPartiturEvents();
 }
 
-function buildChord20(rootName, type) {
-    const rootIdx = NOTES_20.indexOf(rootName);
-    if (rootIdx === -1) return [];
-    
-    let third = 4;
-    let fifth = 7;
-    if (type === 'minor') third = 3;
-    if (type === 'diminished') { third = 3; fifth = 6; }
-
-    return [NOTES_20[rootIdx], NOTES_20[(rootIdx + third) % 20], NOTES_20[(rootIdx + fifth) % 20]];
-}
-
 // ================================================================
-// INISIALISASI EVENT SETELAH HTML DIMUAT
+// INISIALISASI EVENT
 // ================================================================
 function initPartiturEvents() {
     const tampilkanBtn = document.getElementById('tampilkan-akord');
@@ -109,9 +153,38 @@ function initPartiturEvents() {
 }
 
 // ================================================================
+// FUNGSI DASAR 20 NADA
+// ================================================================
+function generateScale(nadaDasar, mayorMinor) {
+    const rootIdx = NOTES_20.indexOf(nadaDasar);
+    if (rootIdx === -1) return [];
+    
+    const intervals = mayorMinor === "mayor" ? MAYOR_INTERVALS_20 : MINOR_INTERVALS_20;
+    let scale = [NOTES_20[rootIdx]];
+    let currentIndex = rootIdx;
+    
+    for (let interval of intervals) {
+        currentIndex = (currentIndex + interval) % 20;
+        scale.push(NOTES_20[currentIndex]);
+    }
+    return scale.slice(0, 7);
+}
+
+function buildChord20(rootName, type) {
+    const rootIdx = NOTES_20.indexOf(rootName);
+    if (rootIdx === -1) return [];
+    
+    let third = 4;
+    let fifth = 7;
+    if (type === 'minor') third = 3;
+    if (type === 'diminished') { third = 3; fifth = 6; }
+
+    return [NOTES_20[rootIdx], NOTES_20[(rootIdx + third) % 20], NOTES_20[(rootIdx + fifth) % 20]];
+}
+
+// ================================================================
 // FUNGSI EDIT PARTITUR
 // ================================================================
-
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
     if (!area) return;
@@ -168,6 +241,8 @@ function tampilkanPesan(msg, warna) {
 }
 
 // ================================================================
-// JALANKAN KETIKA FILE JS DIMUAT (Script ini sudah dipanggil di akhir body)
+// JALANKAN SAAT DOM SIAP
 // ================================================================
-loadPartiturHTML();
+document.addEventListener('DOMContentLoaded', function() {
+    renderPartiturHTML();
+});
