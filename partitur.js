@@ -8,106 +8,7 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// RENDER HTML PARTITUR LANGSUNG (TANPA FETCH - DIJAMIN TAMPIL)
-// ================================================================
-function renderPartiturHTML() {
-    const container = document.getElementById('partitur-container');
-    if (!container) return;
-
-    // HTML Partitur Lengkap (Tanpa perlu file partitur.html)
-    container.innerHTML = `
-        <div id="partitur-section">
-            <h2>Partitur Notasi Angka (Sistem 12-TET 20 Nada)</h2>
-            
-            <div class="partitur-controls">
-                <label>Nada Dasar:</label>
-                <select id="nada-dasar">
-                    <option value="E">E (Do Mayor)</option>
-                    <option value="E#">E#</option>
-                    <option value="F">F</option>
-                    <option value="F#">F#</option>
-                    <option value="G">G</option>
-                    <option value="G#">G#</option>
-                    <option value="H">H</option>
-                    <option value="H#">H#</option>
-                    <option value="I">I</option>
-                    <option value="J">J</option>
-                    <option value="J#">J#</option>
-                    <option value="K">K</option>
-                    <option value="K#">K#</option>
-                    <option value="A">A (Do Minor)</option>
-                    <option value="A#">A#</option>
-                    <option value="B">B</option>
-                    <option value="B#">B#</option>
-                    <option value="C">C</option>
-                    <option value="C#">C#</option>
-                    <option value="D">D</option>
-                </select>
-
-                <label>Skala:</label>
-                <select id="mayor-minor">
-                    <option value="mayor">Mayor (E=1)</option>
-                    <option value="minor">Minor (A=1)</option>
-                </select>
-
-                <button id="tampilkan-akord">Tampilkan Akord</button>
-                
-                <label>Pilih Akord:</label>
-                <select id="pilih-akord" disabled>
-                    <option value="">-- Pilih Akord --</option>
-                </select>
-            </div>
-
-            <!-- Tombol Simbol Notasi -->
-            <div class="symbol-palette">
-                <button onclick="insertSymbol('•')">•</button>
-                <button onclick="insertSymbol('••')">••</button>
-                <button onclick="insertSymbol('•••')">•••</button>
-                <button onclick="insertSymbol('|')">|</button>
-                <button onclick="insertSymbol('‖')">‖</button>
-                <button onclick="insertSymbol(':||')">:||</button>
-                <button onclick="insertSymbol('/')">/</button>
-                <button onclick="insertSymbol('\\')">\</button>
-                <button onclick="insertSymbol('0')">0</button>
-                <button onclick="insertSymbol('♯')">♯</button>
-                <button onclick="insertSymbol('♭')">♭</button>
-                <button onclick="insertSymbol('⌣')">⌣</button>
-                <button onclick="insertSymbol('̅')">̅</button>
-                <button onclick="insertSymbol('࠘')">࠘</button>
-                <button onclick="insertSymbol('߫')">߫</button>
-                <button onclick="insertSymbol('ᅞ')">ᅞ</button>
-                <button onclick="insertSymbol('ᅟ')">ᅟ</button>
-                <button onclick="insertSymbol('ᅝ')">ᅝ</button>
-                <button onclick="insertSymbol('ᤘ')">ᤘ</button>
-                <button onclick="insertSymbol('̈')">̈</button>
-                <button onclick="insertSymbol('᳟')">᳟</button>
-                <button onclick="insertSymbol('‿')">‿</button>
-                <button onclick="insertSymbol('〢')">〢</button>
-                <button onclick="insertSymbol('▕')">▕</button>
-                <button onclick="insertSymbol('ࠡ')">ࠡ</button>
-                <button onclick="insertSymbol('↑')">↑</button>
-                <button onclick="insertSymbol('↓')">↓</button>
-            </div>
-
-            <textarea id="partitur-area" placeholder="Tulis partitur notasi angka di sini..."></textarea>
-
-            <div class="partitur-actions">
-                <button onclick="simpanPartitur()">💾 Simpan</button>
-                <button onclick="bukaPartitur()">📂 Buka</button>
-                <button onclick="cetakPartitur()">🖨️ Cetak</button>
-                <button onclick="bersihkanPartitur()">🗑️ Bersihkan</button>
-            </div>
-
-            <div id="status-message"></div>
-        </div>
-    `;
-
-    // Panggil event setelah HTML dirender
-    initPartiturEvents();
-}
-
-// ================================================================
-// INISIALISASI EVENT
+// INISIALISASI EVENT SETELAH HTML DITANAM
 // ================================================================
 function initPartiturEvents() {
     const tampilkanBtn = document.getElementById('tampilkan-akord');
@@ -183,7 +84,7 @@ function buildChord20(rootName, type) {
 }
 
 // ================================================================
-// FUNGSI EDIT PARTITUR
+// FUNGSI EDIT PARTITUR (PASTIKAN BEKERJA)
 // ================================================================
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
@@ -244,5 +145,5 @@ function tampilkanPesan(msg, warna) {
 // JALANKAN SAAT DOM SIAP
 // ================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    renderPartiturHTML();
+    initPartiturEvents();
 });
