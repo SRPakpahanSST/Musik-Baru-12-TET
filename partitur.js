@@ -1,5 +1,5 @@
 // ================================================================
-// KONSTANTA SISTEM 12-TET 20 NADA (SEDERHANA)
+// KONSTANTA SISTEM 12-TET 20 NADA
 // ================================================================
 const NOTES_20 = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
 const MAYOR_INTERVALS_20 = [2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1];
@@ -8,7 +8,24 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// INISIALISASI EVENT (JALAN LANGSUNG TANPA DOMContentLoaded)
+// FUNGSI INSERT SIMBOL (TANPA FOKUS KURSOR - ANTI GAGAL)
+// ================================================================
+function insertSymbol(symbol) {
+    const area = document.getElementById('partitur-area');
+    if (!area) return;
+
+    // Ambil nilai textarea saat ini
+    let currentValue = area.value;
+    
+    // Tambahkan simbol ke akhir teks (paling aman di HP)
+    area.value = currentValue + symbol;
+    
+    // Paksa textarea untuk mendapatkan fokus (agar user bisa lanjut mengetik)
+    area.focus();
+}
+
+// ================================================================
+// FUNGSI AKORD (TANPA DOMContentLoaded - LANGSUNG JALAN)
 // ================================================================
 function initPartiturEvents() {
     const tampilkanBtn = document.getElementById('tampilkan-akord');
@@ -84,19 +101,8 @@ function buildChord20(rootName, type) {
 }
 
 // ================================================================
-// FUNGSI EDIT PARTITUR (PASTIKAN BEKERJA)
+// FUNGSI SIMPAN, BUKA, CETAK, BERSIHKAN
 // ================================================================
-function insertSymbol(symbol) {
-    const area = document.getElementById('partitur-area');
-    if (!area) return;
-    
-    area.focus(); // Paksa kursor masuk ke textarea
-    const start = area.selectionStart;
-    const end = area.selectionEnd;
-    area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
-    area.setSelectionRange(start + symbol.length, start + symbol.length);
-}
-
 function simpanPartitur() {
     const partitur = document.getElementById('partitur-area').value;
     localStorage.setItem('partiturNotasiAngka', partitur);
@@ -142,6 +148,6 @@ function tampilkanPesan(msg, warna) {
 }
 
 // ================================================================
-// JALANKAN LANGSUNG SAAT FILE DIMUAT
+// JALANKAN LANGSUNG SAAT FILE DIMUAT (Script di akhir body)
 // ================================================================
 initPartiturEvents();
