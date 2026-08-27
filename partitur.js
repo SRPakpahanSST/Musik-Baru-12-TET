@@ -1,5 +1,5 @@
 // ================================================================
-// KONSTANTA SISTEM 12-TET 20 NADA
+// KONSTANTA SISTEM 12-TET 20 NADA (SEDERHANA)
 // ================================================================
 const NOTES_20 = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
 const MAYOR_INTERVALS_20 = [2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1];
@@ -8,10 +8,9 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// INISIALISASI EVENT (TANPA DOMContentLoaded - LANGSUNG JALAN)
+// INISIALISASI EVENT (JALAN LANGSUNG TANPA DOMContentLoaded)
 // ================================================================
 function initPartiturEvents() {
-    // 1. Tombol Tampilkan Akord
     const tampilkanBtn = document.getElementById('tampilkan-akord');
     if (tampilkanBtn) {
         tampilkanBtn.addEventListener('click', function() {
@@ -44,7 +43,6 @@ function initPartiturEvents() {
         });
     }
 
-    // 2. Dropdown Pilih Akord
     const pilihAkord = document.getElementById('pilih-akord');
     if (pilihAkord) {
         pilihAkord.addEventListener('change', function() {
@@ -86,15 +84,13 @@ function buildChord20(rootName, type) {
 }
 
 // ================================================================
-// FUNGSI EDIT PARTITUR
+// FUNGSI EDIT PARTITUR (PASTIKAN BEKERJA)
 // ================================================================
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
     if (!area) return;
     
-    // PASTIKAN KURSOR BERADA DI TEXTAREA
-    area.focus();
-    
+    area.focus(); // Paksa kursor masuk ke textarea
     const start = area.selectionStart;
     const end = area.selectionEnd;
     area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
@@ -146,6 +142,6 @@ function tampilkanPesan(msg, warna) {
 }
 
 // ================================================================
-// JALANKAN LANGSUNG SAAT FILE DIMUAT (Script di akhir body)
+// JALANKAN LANGSUNG SAAT FILE DIMUAT
 // ================================================================
 initPartiturEvents();
