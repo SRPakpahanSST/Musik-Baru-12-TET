@@ -8,24 +8,21 @@ const MINOR_INTERVALS_20 = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
 let akordList = [];
 
 // ================================================================
-// FUNGSI INSERT SIMBOL (TANPA FOKUS KURSOR - ANTI GAGAL)
+// FUNGSI INSERT SIMBOL (MENAMBAHKAN KE AKHIR TEKS - ANTI GAGAL DI HP)
 // ================================================================
 function insertSymbol(symbol) {
     const area = document.getElementById('partitur-area');
     if (!area) return;
 
-    // Ambil nilai textarea saat ini
-    let currentValue = area.value;
+    // Tambahkan simbol ke akhir teks (paling aman di HP, tidak perlu fokus kursor)
+    area.value = area.value + symbol;
     
-    // Tambahkan simbol ke akhir teks (paling aman di HP)
-    area.value = currentValue + symbol;
-    
-    // Paksa textarea untuk mendapatkan fokus (agar user bisa lanjut mengetik)
+    // Paksa fokus ke textarea agar pengguna bisa lanjut mengetik
     area.focus();
 }
 
 // ================================================================
-// FUNGSI AKORD (TANPA DOMContentLoaded - LANGSUNG JALAN)
+// FUNGSI AKORD (LANGSUNG JALAN TANPA DOMContentLoaded)
 // ================================================================
 function initPartiturEvents() {
     const tampilkanBtn = document.getElementById('tampilkan-akord');
@@ -148,6 +145,6 @@ function tampilkanPesan(msg, warna) {
 }
 
 // ================================================================
-// JALANKAN LANGSUNG SAAT FILE DIMUAT (Script di akhir body)
+// JALANKAN LANGSUNG SAAT FILE DIMUAT
 // ================================================================
 initPartiturEvents();
