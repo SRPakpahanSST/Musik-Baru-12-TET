@@ -1177,19 +1177,30 @@
 
                     <!-- Simbol Notasi Lengkap -->
                     <div class="symbol-palette">
-                        <button onclick="insertSymbol('•')" title="Titik (oktaf tinggi)">•</button>
-                        <button onclick="insertSymbol('••')" title="Dua titik">••</button>
+                        <!-- Oktaf Tinggi -->
+                        <button onclick="insertSymbol('˙')" title="Titik satu di atas (Oktaf tinggi 1)">˙</button>
+                        <button onclick="insertSymbol('¨')" title="Titik dua di atas (Oktaf tinggi 2)">¨</button>
+                        <button onclick="insertSymbol('•')" title="Titik (staccato)">•</button>
+                        
+                        <!-- Garis & Birama -->
                         <button onclick="insertSymbol('‾')" title="Garis 1/8 di atas">‾</button>
                         <button onclick="insertSymbol('‾‾')" title="Garis 1/16 di atas">‾‾</button>
                         <button onclick="insertSymbol('‿')" title="Legato bawah">‿</button>
                         <button onclick="insertSymbol('|')" title="Garis birama">|</button>
                         <button onclick="insertSymbol('(|')" title="Birama buka">(|</button>
                         <button onclick="insertSymbol('|)')" title="Birama tutup">|)</button>
-                        <button onclick="insertSymbol(':||')" title="Tanda ulang (repeat)">:||</button>
+                        
+                        <!-- Tanda Ulang & Tutup Lagu -->
+                        <button onclick="insertSymbol('||:')" title="Awal repeat">||:</button>
+                        <button onclick="insertSymbol(':||')" title="Akhir repeat">:||</button>
+                        <button onclick="insertSymbol('||')" title="Tanda tutup lagu (garis ganda)">||</button>
+                        
+                        <!-- Simbol Lainnya -->
                         <button onclick="insertSymbol('0')" title="Nada diam">0</button>
                         <button onclick="insertSymbol('♯')" title="Kruis">♯</button>
                         <button onclick="insertSymbol('♭')" title="Mol">♭</button>
-                        <button onclick="insertSymbol("'")" title="Aksen">'</button>
+                        <!-- PERBAIKAN TANDA PETIK: Gunakan JavaScript escape -->
+                        <button onclick="insertSymbol(String.fromCharCode(39))" title="Aksen">'</button>
                         <button onclick="insertSymbol('/')" title="Slur">/</button>
                         <button onclick="insertSymbol('\\')" title="Slur terbalik">\</button>
                         <button onclick="insertSymbol('↑')" title="Nada naik">↑</button>
@@ -2659,17 +2670,31 @@
 
         let akordList = [];
 
-        // Fungsi insert simbol (aman di HP)
+        // ================================================================
+        // FUNGSI INSERT SIMBOL (MENEMPEL DI POSISI KURSOR)
+        // ================================================================
         function insertSymbol(symbol) {
             const area = document.getElementById('partitur-area');
             if (!area) return;
-            area.value = area.value + symbol;
+            
+            // Ambil posisi kursor
+            const start = area.selectionStart;
+            const end = area.selectionEnd;
+            
+            // Sisipkan simbol tepat di posisi kursor
+            area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
+            
+            // Fokuskan kembali ke textarea
             area.focus();
-            const len = area.value.length;
-            area.setSelectionRange(len, len);
+            
+            // Set kursor ke posisi setelah simbol yang baru disisipkan
+            const newPos = start + symbol.length;
+            area.setSelectionRange(newPos, newPos);
         }
 
-        // Fungsi generate skala
+        // ================================================================
+        // FUNGSI AKORD 20 NADA (E, E#, F, F#, ..., D)
+        // ================================================================
         function generateScalePartitur(nadaDasar, mayorMinor) {
             const rootIdx = NOTES_20_PARTITUR.indexOf(nadaDasar);
             if (rootIdx === -1) return [];
@@ -2680,10 +2705,9 @@
                 currentIndex = (currentIndex + interval) % 20;
                 scale.push(NOTES_20_PARTITUR[currentIndex]);
             }
-            return scale.slice(0, 7);
+            return scale.slice(0, 7); // Ambil 7 nada pertama untuk akord
         }
 
-        // Fungsi build akord
         function buildChord20Partitur(rootName, type) {
             const rootIdx = NOTES_20_PARTITUR.indexOf(rootName);
             if (rootIdx === -1) return [];
@@ -2694,7 +2718,6 @@
             return [NOTES_20_PARTITUR[rootIdx], NOTES_20_PARTITUR[(rootIdx + third) % 20], NOTES_20_PARTITUR[(rootIdx + fifth) % 20]];
         }
 
-        // Inisialisasi event partitur (TANPA BLOKIR SPASI)
         function initPartiturEvents() {
             const tampilkanBtn = document.getElementById('tampilkan-akord');
             if (tampilkanBtn) {
@@ -2736,25 +2759,80 @@
             if (area) { area.onkeydown = null; }
         }
 
-        // Simpan Partitur
-        function simpanPartitur() {
+        // ================================================================
+        // FUNGSI SIMPAN & BUKA DENGAN PEMILIHAN FOLDER (FILE PICKER)
+        // ================================================================
+        async function simpanPartitur() {
             const partitur = document.getElementById('partitur-area').value;
-            localStorage.setItem('partiturNotasiAngka', partitur);
-            tampilkanPesanPartitur("Partitur berhasil disimpan!", "green");
-        }
-
-        // Buka Partitur
-        function bukaPartitur() {
-            const partitur = localStorage.getItem('partiturNotasiAngka');
-            if (partitur) {
-                document.getElementById('partitur-area').value = partitur;
-                tampilkanPesanPartitur("Partitur berhasil dibuka!", "blue");
+            const blob = new Blob([partitur], { type: 'text/plain' });
+            
+            // Cek apakah browser mendukung File System Access API
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: 'partitur.txt',
+                        types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    tampilkanPesanPartitur("Partitur berhasil disimpan di folder pilihan Anda!", "green");
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        tampilkanPesanPartitur("Gagal menyimpan: " + err.message, "red");
+                    }
+                }
             } else {
-                tampilkanPesanPartitur("Belum ada partitur tersimpan.", "red");
+                // Fallback: Download otomatis
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'partitur.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+                tampilkanPesanPartitur("Partitur berhasil diunduh (browser tidak mendukung pilih folder).", "green");
             }
         }
 
-        // Cetak Partitur
+        async function bukaPartitur() {
+            // Cek apakah browser mendukung File System Access API
+            if (window.showOpenFilePicker) {
+                try {
+                    const [handle] = await window.showOpenFilePicker({
+                        types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }]
+                    });
+                    const file = await handle.getFile();
+                    const content = await file.text();
+                    document.getElementById('partitur-area').value = content;
+                    tampilkanPesanPartitur("Partitur berhasil dibuka dari folder pilihan Anda!", "blue");
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        tampilkanPesanPartitur("Gagal membuka: " + err.message, "red");
+                    }
+                }
+            } else {
+                // Fallback: Gunakan input file
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            document.getElementById('partitur-area').value = event.target.result;
+                            tampilkanPesanPartitur("Partitur berhasil dibuka!", "blue");
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                input.click();
+            }
+        }
+
+        // ================================================================
+        // FUNGSI CETAK & BERSIHKAN
+        // ================================================================
         function cetakPartitur() {
             const area = document.getElementById('partitur-area');
             const partiturText = area.value;
@@ -2764,7 +2842,6 @@
             printWindow.print();
         }
 
-        // Bersihkan Partitur
         function bersihkanPartitur() {
             if (confirm("Yakin ingin menghapus semua isi partitur?")) {
                 document.getElementById('partitur-area').value = '';
@@ -2772,7 +2849,6 @@
             }
         }
 
-        // Tampilkan Pesan Partitur
         function tampilkanPesanPartitur(msg, warna) {
             const statusDiv = document.getElementById('status-message');
             if (!statusDiv) return;
@@ -2781,7 +2857,6 @@
             setTimeout(() => { statusDiv.textContent = ""; }, 3000);
         }
 
-        // Panggil saat DOM siap
         document.addEventListener('DOMContentLoaded', function() {
             initPartiturEvents();
         });
