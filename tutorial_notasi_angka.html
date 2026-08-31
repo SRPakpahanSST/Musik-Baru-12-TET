@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial Notasi Angka - PMD Musik 12 TET</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d0d1a;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #16213e;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        h1 {
+            text-align: center;
+            color: #f5a623;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #e94560;
+            border-bottom: 2px solid #0f3460;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #ffd700;
+            margin-top: 20px;
+        }
+        .symbol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .symbol-table th, .symbol-table td {
+            border: 1px solid #2a3a5e;
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .symbol-table th {
+            background: #0f3460;
+            color: #f5a623;
+        }
+        .symbol-table td:first-child {
+            font-size: 1.5rem;
+            text-align: center;
+            color: #fff;
+            background: #1a1a2e;
+            width: 80px;
+        }
+        .note {
+            background: #2a1a3e;
+            border-left: 4px solid #6c2bd9;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        .warning {
+            background: #2a0d0d;
+            border-left: 4px solid #e94560;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            color: #e94560;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: #e94560;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            background: #c73652;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎼 Tutorial Notasi Angka</h1>
+        <p>Panduan penggunaan simbol-simbol dalam penulisan partitur notasi angka, khususnya untuk sistem 12-TET 20 Nada per Oktaf.</p>
+
+        <a href="index.html" class="back-link">← Kembali ke Aplikasi</a>
+
+        <!-- Bagian 1 -->
+        <h2>1. Angka Dasar Notasi</h2>
+        <p>Angka 1 sampai 7 melambangkan nada dasar dalam satu oktaf (Do, Re, Mi, Fa, Sol, La, Si). Dalam sistem 20 nada, kita menggunakan angka 1 sampai 11.</p>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>1-7</td><td>Nada Dasar</td><td>Do, Re, Mi, Fa, Sol, La, Si</td></tr>
+            <tr><td>8-11</td><td>Nada Tambahan (20-nada)</td><td>Nada kromatik lanjutan dalam sistem 12-TET 20 nada</td></tr>
+        </table>
+
+        <!-- Bagian 2 -->
+        <h2>2. Tanda Oktaf</h2>
+        <p>Tanda titik di atas atau di bawah angka menunjukkan perpindahan oktaf.</p>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>˙</td><td>Titik di Atas</td><td>Naik satu oktaf (nada tinggi)</td></tr>
+            <tr><td>¨</td><td>Dua Titik di Atas</td><td>Naik dua oktaf (sangat tinggi)</td></tr>
+            <tr><td>̣</td><td>Titik di Bawah</td><td>Turun satu oktaf (nada rendah)</td></tr>
+        </table>
+        <div class="note">
+            <strong>Contoh:</strong> <code>5˙</code> berarti nada 5 dimainkan satu oktaf lebih tinggi. <code>3̣</code> berarti nada 3 dimainkan satu oktaf lebih rendah.
+        </div>
+
+        <!-- Bagian 3 -->
+        <h2>3. Garis Ritme (Beam)</h2>
+        <p>Garis di atas angka menentukan durasi atau ketukan nada.</p>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>▔</td><td>Satu Garis di Atas</td><td>Nada 1/8 ketuk (setengah ketukan)</td></tr>
+            <tr><td>▔▁</td><td>Dua Garis di Atas</td><td>Nada 1/16 ketuk (seperempat ketukan)</td></tr>
+            <tr><td>_</td><td>Garis di Bawah</td><td>Nada 1/2 ketuk (dua ketukan)</td></tr>
+        </table>
+        <div class="warning">
+            <strong>Penting:</strong> Dalam penulisan manual, simbol garis ganda <code>▔▁</code> mewakili not 1/16 (1/4 ketuk dalam birama 4/4). Simbol ini dapat digunakan untuk menggabungkan dua nada dalam satu ketukan.
+        </div>
+
+        <!-- Bagian 4 -->
+        <h2>4. Tanda Birama & Pengulangan</h2>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>|</td><td>Garis Birama</td><td>Pemisah antar birama</td></tr>
+            <tr><td>||:</td><td>Awal Repeat</td><td>Mulai pengulangan</td></tr>
+            <tr><td>:||</td><td>Akhir Repeat</td><td>Kembali ke awal repeat</td></tr>
+            <tr><td>||</td><td>Garis Ganda</td><td>Penutup lagu / bagian</td></tr>
+            <tr><td>D.C.</td><td>Da Capo</td><td>Kembali ke awal lagu</td></tr>
+            <tr><td>D.S.</td><td>Dal Segno</td><td>Kembali ke tanda Segno (𝄋)</td></tr>
+        </table>
+
+        <!-- Bagian 5 -->
+        <h2>5. Ekspresi & Artikulasi</h2>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>></td><td>Aksen</td><td>Tekan nada lebih kuat</td></tr>
+            <tr><td><</td><td>Crescendo</td><td>Suara menguat secara bertahap</td></tr>
+            <tr><td>></td><td>Decrescendo</td><td>Suara melemah secara bertahap</td></tr>
+            <tr><td>⌣</td><td>Fermata</td><td>Menahan nada lebih lama</td></tr>
+            <tr><td>tr</td><td>Trill</td><td>Getaran cepat antara nada utama dan atasnya</td></tr>
+            <tr><td>~</td><td>Glissando</td><td>Meluncur dari satu nada ke nada lain</td></tr>
+        </table>
+
+        <!-- Bagian 6 -->
+        <h2>6. Tanda Nada Diam (Rest)</h2>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>0</td><td>Nada Diam</td><td>Berhenti sejenak (istirahat)</td></tr>
+            <tr><td>0_</td><td>Nada Diam 1/2</td><td>Istirahat setengah ketuk</td></tr>
+            <tr><td>0.</td><td>Nada Diam 1,5</td><td>Istirahat satu setengah ketuk</td></tr>
+        </table>
+
+        <!-- Bagian 7 -->
+        <h2>7. Tanda Kromatik</h2>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>♯</td><td>Kruis (Sharp)</td><td>Menaikkan setengah nada</td></tr>
+            <tr><td>♭</td><td>Mol (Flat)</td><td>Menurunkan setengah nada</td></tr>
+            <tr><td>♮</td><td>Natural</td><td>Mengembalikan ke nada asli</td></tr>
+        </table>
+
+        <!-- Bagian 8 -->
+        <h2>8. Istilah Tempo & Dinamika</h2>
+        <table class="symbol-table">
+            <tr><th>Simbol</th><th>Nama</th><th>Keterangan</th></tr>
+            <tr><td>Allegro</td><td>Cepat</td><td>Tempo cepat</td></tr>
+            <tr><td>Moderato</td><td>Sedang</td><td>Tempo sedang</td></tr>
+            <tr><td>Adagio</td><td>Lambat</td><td>Tempo lambat</td></tr>
+            <tr><td>p</td><td>Piano</td><td>Lembut</td></tr>
+            <tr><td>f</td><td>Forte</td><td>Kuat</td></tr>
+            <tr><td>mf</td><td>Mezzo Forte</td><td>Sedang kuat</td></tr>
+        </table>
+
+        <h2>💡 Tips Penggunaan di Aplikasi</h2>
+        <ul>
+            <li><strong>Menyisipkan Simbol:</strong> Klik tombol simbol pada palet, maka simbol akan langsung masuk di posisi kursor Anda.</li>
+            <li><strong>Mengganti Angka:</strong> Jika tombol angka sudah otomatis muncul (misal <code>1‾_2</code>), Anda bisa menghapus angka 1 dan 2 lalu menggantinya dengan nada yang diinginkan.</li>
+            <li><strong>Garis Ganda:</strong> Gunakan tombol <code>▔▁</code> untuk menulis dua nada dengan durasi 1/16 (cepat).</li>
+            <li><strong>Menyimpan:</strong> Gunakan tombol Simpan untuk menyimpan partitur ke file teks, dan tombol Buka untuk membuka partitur yang sudah disimpan.</li>
+        </ul>
+
+        <a href="index.html" class="back-link">← Kembali ke Aplikasi</a>
+    </div>
+</body>
+</html>
