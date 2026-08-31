@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMD Musik 12 TET</title>
+    <style>
+        /* ===== RESET & GLOBAL ===== */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===== LAYAR DEPAN ===== */
+        #welcome {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0d0d1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+            padding: 20px;
+        }
+        #welcome.hidden { opacity: 0; pointer-events: none; }
+        #welcome img {
+            max-width: 90%; max-height: 60vh;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            margin-bottom: 30px;
+            object-fit: contain;
+            background: #1a1a2e;
+        }
+        #welcome h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e94560, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        #welcome p {
+            font-size: 1.2rem;
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #welcome button {
+            padding: 16px 50px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #e94560, #f5a623);
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+        }
+        #welcome button:hover { transform: scale(1.05); box-shadow: 0 8px 30px rgba(233,69,96,0.6); }
+
+        /* ===== APLIKASI UTAMA ===== */
+        #app {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            width: 100%;
+            max-width: 1500px;
+        }
+        #app.show { opacity: 1; }
+
+        .container {
+            width: 100%;
+            background: #16213e;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            text-align: center;
+            border-bottom: 2px solid #0f3460;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #e94560, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p { color: #aaa; font-size: 0.95rem; margin-top: 5px; }
+
+        /* ===== TAB NAVIGASI ===== */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #0d0d1a;
+            border-radius: 12px;
+        }
+        .tab-btn-nav {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #0f3460;
+            color: #aaa;
+        }
+        .tab-btn-nav:hover { background: #1a4a7a; color: #fff; }
+        .tab-btn-nav.active {
+            background: #e94560;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(233,69,96,0.3);
+        }
+        .tab-btn-nav.keyboard-tab { background: #e94560; color: #fff; }
+        .tab-btn-nav.keyboard-tab:hover { background: #c73652; }
+        .tab-btn-nav.composer-tab { background: #6c2bd9; color: #fff; }
+        .tab-btn-nav.composer-tab:hover { background: #5a22b5; }
+        .tab-btn-nav.transcriber-tab { background: #2d7d46; color: #fff; }
+        .tab-btn-nav.transcriber-tab:hover { background: #3a9a5a; }
+        .tab-btn-nav.chord-tab { background: #b8860b; color: #fff; }
+        .tab-btn-nav.chord-tab:hover { background: #d4a017; }
+        .tab-btn-nav.tutorial-btn { background: #f5a623; color: #000; }
+        .tab-btn-nav.tutorial-btn:hover { background: #e0951a; }
+
+        /* ===== TAB CONTENT ===== */
+        .tab-content-main { display: none; }
+        .tab-content-main.active { display: block; }
+
+        /* ===== CONTROLS (Keyboard) ===== */
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 15px;
+            background: #0d0d1a;
+            border-radius: 12px;
+        }
+        .controls label {
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 15px;
+            transition: 0.2s;
+        }
+        .controls label:hover { background: #1a1a3e; }
+        .controls input[type="radio"] { margin-right: 4px; accent-color: #e94560; }
+        .controls label.active-mode { background: #e94560; color: #fff; border-radius: 15px; }
+        .controls select, .controls input[type="range"] {
+            background: #0f3460;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            outline: none;
+        }
+        .controls select option { background: #0d0d1a; }
+        .controls input[type="range"] { width: 70px; padding: 0; accent-color: #e94560; background: transparent; }
+        .controls .effect-label { color: #aaa; font-size: 0.7rem; margin-right: 2px; }
+        .btn {
+            padding: 5px 14px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.75rem;
+        }
+        .btn-primary { background: #e94560; color: #fff; }
+        .btn-primary:hover { background: #c73652; transform: scale(1.04); }
+        .btn-secondary { background: #0f3460; color: #fff; }
+        .btn-secondary:hover { background: #1a4a7a; }
+        .btn-danger { background: #a04040; color: #fff; }
+        .btn-danger:hover { background: #c05050; }
+        .btn-success { background: #2d7d46; color: #fff; }
+        .btn-success:hover { background: #3a9a5a; }
+        .effect-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #111;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .chord-info {
+            background: #0f3460;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #ffd700;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+
+        .mode-desc-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #111;
+            padding: 3px 14px 3px 10px;
+            border-radius: 20px;
+        }
+        .mode-desc-group .mode-label { color: #aaa; font-size: 0.75rem; }
+        .mode-desc-group .mode-badge-desc {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            background: #0f3460;
+            color: #aaa;
+        }
+
+        .desc-area { width: 100%; padding: 8px 0; }
+        .desc-area textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #0d0d1a;
+            color: #fff;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 40px;
+            outline: none;
+            border: 1px solid #2a3a5e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .desc-area textarea:focus { border-color: #e94560; }
+        .desc-area .hint { color: #666; font-size: 0.7rem; margin-top: 3px; }
+        .desc-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            align-items: center;
+        }
+        .desc-controls label { color: #aaa; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; }
+        .desc-controls select {
+            background: #0f3460;
+            color: #fff;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            outline: none;
+        }
+        .melody-result {
+            background: #0d0d1a;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            color: #ffd700;
+            word-wrap: break-word;
+            line-height: 1.8;
+            border: 1px solid #2a3a5e;
+            min-height: 30px;
+        }
+
+        .keyboard-wrapper {
+            overflow-x: auto;
+            padding: 10px 0;
+            background: #0d0d1a;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+        .keyboard-container {
+            position: relative;
+            min-width: 2800px;
+            height: 210px;
+            margin: 0 auto;
+        }
+        .key {
+            position: absolute;
+            cursor: pointer;
+            border-radius: 0 0 6px 6px;
+            transition: all 0.08s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 6px;
+            user-select: none;
+            border: 1px solid #333;
+        }
+        .key-white {
+            background: #f0f0f0;
+            color: #222;
+            width: 30px;
+            height: 155px;
+            border-bottom: 3px solid #bbb;
+            padding-bottom: 4px;
+            z-index: 1;
+        }
+        .key-white:hover { background: #e0e0e0; transform: scale(1.02); }
+        .key-white.active { background: #ffd700; transform: scale(0.97); border-color: #ffaa00; }
+        .key-black {
+            background: #222;
+            color: #fff;
+            width: 18px;
+            height: 95px;
+            border-bottom: 3px solid #111;
+            padding-bottom: 3px;
+            z-index: 2;
+            margin-left: -9px;
+        }
+        .key-black:hover { background: #444; }
+        .key-black.active { background: #ffd700; color: #222; transform: scale(0.95); }
+        .key-label { font-size: 5px; font-weight: 700; text-align: center; line-height: 1.2; pointer-events: none; }
+        .key-white .key-label { color: #333; }
+        .key-black .key-label { color: #ddd; }
+        .octave-label {
+            position: absolute;
+            bottom: -5px;
+            font-size: 9px;
+            color: #f5a623;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
+        }
+        .status {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #aaa;
+            text-align: center;
+            min-height: 22px;
+        }
+        .status span { color: #f5a623; font-weight: 600; }
+
+        .ai-container {
+            background: #0d0d1a;
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 300px;
+        }
+        .ai-container h3 { color: #f5a623; margin-bottom: 10px; font-size: 1.1rem; }
+        .ai-container textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 0.85rem;
+            resize: vertical;
+            min-height: 60px;
+            outline: none;
+            border: 1px solid #2a3a5e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .ai-container textarea:focus { border-color: #e94560; }
+        .ai-container .hint { color: #666; font-size: 0.75rem; margin-top: 3px; }
+        .ai-result {
+            margin-top: 12px;
+            padding: 12px;
+            background: #111;
+            border-radius: 8px;
+            color: #ffd700;
+            font-family: monospace;
+            min-height: 50px;
+            word-wrap: break-word;
+            line-height: 1.8;
+            font-size: 0.85rem;
+        }
+        .ai-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .ai-row label { color: #aaa; display: block; margin-bottom: 3px; font-size: 0.8rem; }
+        .ai-row select {
+            width: 100%;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #0d0d1a;
+            color: #fff;
+            outline: none;
+            font-size: 0.8rem;
+        }
+        .mood-tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #0f3460;
+            color: #aaa;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.75rem;
+            border: 1px solid transparent;
+            display: inline-block;
+        }
+        .mood-tag:hover { background: #1a4a7a; }
+        .mood-tag.active { border-color: #e94560; color: #fff; background: #e94560; }
+        .mood-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+
+        .ai-mode-radio {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #111;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .ai-mode-radio label { color: #aaa; font-size: 0.75rem; cursor: pointer; padding: 3px 10px; border-radius: 12px; transition: 0.2s; }
+        .ai-mode-radio label:hover { background: #1a1a3e; }
+        .ai-mode-radio label.active-ai-mode { background: #e94560; color: #fff; }
+        .ai-mode-radio input[type="radio"] { accent-color: #e94560; margin-right: 3px; }
+        .ai-mode-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.6rem; margin-left: 5px; }
+        .ai-mode-badge.desc { background: #0f3460; color: #aaa; }
+        .ai-mode-badge.prompt { background: #2d7d46; color: #fff; }
+
+        .ai-input-area { display: none; width: 100%; }
+        .ai-input-area.show { display: block; }
+        .ai-input-area .input-group { margin-bottom: 8px; }
+        .ai-input-area .input-group label { color: #aaa; display: block; margin-bottom: 3px; font-size: 0.8rem; }
+        .ai-input-area .input-group textarea,
+        .ai-input-area .input-group input[type="password"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 10px;
+            background: #0d0d1a;
+            color: #fff;
+            font-size: 0.85rem;
+            outline: none;
+            border: 1px solid #2a3a5e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .ai-input-area .input-group textarea { resize: vertical; min-height: 50px; }
+        .ai-input-area .input-group textarea:focus,
+        .ai-input-area .input-group input[type="password"]:focus { border-color: #e94560; }
+        .ai-input-area .input-group .hint { color: #666; font-size: 0.7rem; margin-top: 3px; }
+        .ai-input-area .input-group .api-hint {
+            color: #888;
+            font-size: 0.7rem;
+            margin-top: 3px;
+            background: #1a0d0d;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border-left: 3px solid #a04040;
+        }
+        .ai-input-area .input-group .api-hint a { color: #f5a623; }
+
+        .info-section {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #2a3a5e;
+            margin-top: 20px;
+        }
+        .info-section h2 { font-size: 1.2rem; margin-bottom: 15px; color: #f5a623; }
+        .info-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 15px; }
+        .tab-btn {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #0f3460;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .tab-btn.active { background: #e94560; color: #fff; }
+        .tab-btn:hover { background: #1a4a7a; color: #fff; }
+        .tab-content-info {
+            background: #0d0d1a;
+            border-radius: 12px;
+            padding: 18px;
+            max-height: 350px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #ccc;
+        }
+        .tab-content-info h3 { color: #f5a623; margin: 10px 0 6px; }
+        .tab-content-info ul { padding-left: 20px; }
+        .tab-content-info li { margin-bottom: 4px; }
+        .freq-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+        .freq-table th, .freq-table td { padding: 3px 5px; border: 1px solid #333; text-align: center; }
+        .freq-table th { background: #0f3460; color: #f5a623; }
+        .freq-table tr:nth-child(even) { background: #111; }
+        .freq-table .note-name { font-weight: 600; color: #ffd700; }
+        .freq-table .black-note { color: #ff6b6b; }
+
+        .footer-note {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+            border-top: 1px solid #222;
+            padding-top: 15px;
+        }
+        .footer-note a { color: #f5a623; text-decoration: none; font-weight: 600; }
+        .footer-note a:hover { text-decoration: underline; }
+
+        .tab-content-main::-webkit-scrollbar { width: 6px; }
+        .tab-content-main::-webkit-scrollbar-track { background: #0d0d1a; }
+        .tab-content-main::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+        .keyboard-wrapper::-webkit-scrollbar { height: 8px; }
+        .keyboard-wrapper::-webkit-scrollbar-track { background: #0d0d1a; }
+        .keyboard-wrapper::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+
+        .record-area {
+            text-align: center;
+            padding: 20px;
+            background: #0d0d1a;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px dashed #2a3a5e;
+            transition: 0.3s;
+        }
+        .record-area.recording { border-color: #e94560; background: #1a0d1a; }
+        .record-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #e94560;
+            color: #fff;
+        }
+        .record-btn:hover { transform: scale(1.05); }
+        .record-btn.recording { background: #a04040; animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(233,69,96,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px 10px rgba(233,69,96,0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(233,69,96,0); }
+        }
+        .timer { font-size: 1.3rem; color: #f5a623; margin-top: 8px; font-family: monospace; }
+        .waveform {
+            width: 100%;
+            height: 70px;
+            background: #0d0d1a;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-size: 0.8rem;
+            overflow: hidden;
+        }
+        .waveform canvas { width: 100%; height: 100%; }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #0d0d1a;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar.show { display: block; }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #f5a623);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .transcriber-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 15px;
+        }
+        .transcriber-controls label { color: #aaa; font-size: 0.8rem; cursor: pointer; }
+        .transcriber-controls input[type="radio"] { accent-color: #e94560; margin-right: 4px; }
+        .transcriber-controls .radio-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: #0d0d1a;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+        .radio-group label.active-radio { color: #f5a623; }
+        .transcriber-controls select {
+            background: #0f3460;
+            color: #fff;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            outline: none;
+        }
+        .mode-indicator {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 8px;
+        }
+        .mode-indicator.standard { background: #0f3460; color: #aaa; }
+        .mode-indicator.improved { background: #2d7d46; color: #fff; }
+        .badge {
+            display: inline-block;
+            background: #e94560;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+        .error-message {
+            background: #2a0d0d;
+            border: 1px solid #e94560;
+            color: #e94560;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        .error-message.show { display: block; }
+        .warning-text { color: #f5a623; font-size: 0.8rem; text-align: center; margin-top: 8px; }
+        .result-area .info-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+        .result-area .info-row span { color: #888; font-size: 0.85rem; }
+
+        @media (max-width:600px) {
+            .container { padding: 12px; }
+            .key-white { width: 24px; height: 130px; }
+            .key-black { width: 15px; height: 80px; }
+            .keyboard-container { min-width: 2200px; height: 175px; }
+            .controls { gap: 5px; padding: 8px; }
+            .btn { padding: 3px 10px; font-size: 0.65rem; }
+            .controls select { font-size: 0.65rem; padding: 3px 8px; }
+            .controls input[type="range"] { width: 50px; }
+            #welcome h1 { font-size: 1.8rem; }
+            #welcome p { font-size: 1rem; }
+            #welcome button { padding: 12px 30px; font-size: 1.2rem; }
+            #welcome img { max-height: 40vh; }
+            .tab-btn-nav { padding: 6px 12px; font-size: 0.7rem; }
+            .desc-controls { gap: 6px; }
+            .desc-controls label { font-size: 0.7rem; }
+            .desc-controls select { font-size: 0.65rem; }
+            .transcriber-controls { gap: 8px; }
+            .transcriber-controls label { font-size: 0.7rem; }
+            .transcriber-controls select { font-size: 0.65rem; }
+            .radio-group { gap: 6px; padding: 3px 10px; }
+            .record-btn { width: 60px; height: 60px; font-size: 1.8rem; }
+        }
+
+        /* ===== CSS PARTITUR ===== */
+        #partitur-section {
+            width: 100%;
+            background: #16213e;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #partitur-section h2 { text-align: center; color: #f5a623; margin-bottom: 20px; font-size: 1.5rem; }
+        .partitur-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; background: #0d0d1a; padding: 12px; border-radius: 12px; }
+        .partitur-controls label { color: #aaa; font-size: 0.8rem; }
+        .partitur-controls select, .partitur-controls button { padding: 8px 12px; border: none; border-radius: 20px; background: #0f3460; color: #fff; cursor: pointer; font-size: 0.8rem; }
+        .partitur-controls button { background: #e94560; font-weight: bold; }
+        .symbol-palette { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 15px; background: #0d0d1a; padding: 10px; border-radius: 12px; }
+        .symbol-palette button { width: 50px; height: 45px; font-size: 16px; border: 1px solid #2a3a5e; border-radius: 8px; background: #1a1a2e; color: #fff; cursor: pointer; transition: 0.2s; }
+        .symbol-palette button:hover { background: #e94560; }
+        #partitur-area { width: 100%; height: 250px; font-family: 'Courier New', monospace; font-size: 16px; padding: 15px; border: 2px solid #2a3a5e; border-radius: 12px; resize: vertical; background: #0d0d1a; color: #ffd700; margin-bottom: 15px; }
+        .partitur-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .partitur-actions button { padding: 10px 20px; border: none; border-radius: 20px; color: white; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .partitur-actions button:nth-child(1) { background-color: #4CAF50; }
+        .partitur-actions button:nth-child(2) { background-color: #2196F3; }
+        .partitur-actions button:nth-child(3) { background-color: #FF9800; }
+        .partitur-actions button:nth-child(4) { background-color: #f44336; }
+        #status-message { margin-top: 10px; font-weight: bold; color: #f5a623; text-align: center; }
+
+        .tutorial-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        .tutorial-container {
+            background: #16213e;
+            border-radius: 20px;
+            max-width: 650px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #2a3a5e;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+        .tutorial-container h2 { color: #f5a623; margin: 0 0 15px 0; font-size: 1.4rem; }
+        .tutorial-container .tutorial-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            position: absolute;
+            top: 12px;
+            right: 18px;
+        }
+        .tutorial-container .tutorial-close:hover { color: #fff; }
+        .tutorial-container .tutorial-content { line-height: 1.7; font-size: 0.95rem; min-height: 200px; }
+        .tutorial-container .tutorial-content ul { padding-left: 20px; margin: 8px 0; }
+        .tutorial-container .tutorial-content li { margin-bottom: 4px; }
+        .tutorial-container .tutorial-content code {
+            background: #0d0d1a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #f5a623;
+        }
+        .tutorial-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tutorial-nav .step-indicator { color: #888; font-size: 0.8rem; }
+        .tutorial-nav .btn-group { display: flex; gap: 8px; }
+        .tutorial-nav .btn-group button {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .tutorial-nav .btn-group .prev-btn { background: #0f3460; }
+        .tutorial-nav .btn-group .prev-btn:hover { background: #1a4a7a; }
+        .tutorial-nav .btn-group .next-btn { background: #e94560; }
+        .tutorial-nav .btn-group .next-btn:hover { background: #c73652; }
+        .tutorial-nav .btn-group .done-btn { background: #2d7d46; }
+        .tutorial-nav .btn-group .done-btn:hover { background: #3a9a5a; }
+        .tutorial-dots { display: flex; gap: 6px; justify-content: center; margin-top: 12px; }
+        .tutorial-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2a3a5e;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .tutorial-dots span.active { background: #e94560; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SPLASH SCREEN ===== -->
+    <div id="welcome">
+        <img id="splashImg" src="splash.png" alt="Gambar splash PMD Musik"
+             onerror="this.alt='Yuk, mulai saja'; this.style.border='1px dashed #444';" />
+        <h1>🎵 PMD Musik 12 TET</h1>
+        <p>Pedang Mata Dua Musik Digital<br />Mikrotonal 20 Nada per Oktaf</p>
+        <button id="startBtn">🚀 Mulai</button>
+    </div>
+
+    <!-- ===== APLIKASI UTAMA ===== -->
+    <div id="app">
+        <div class="container">
+
+            <header>
+                <h1>🎵 PMD Musik 12 TET</h1>
+                <p>Eksplorasi Mikrotonal — Inovasi Sistem 20 Nada per Oktaf</p>
+            </header>
+
+            <!-- ===== TAB NAVIGASI ===== -->
+            <div class="tab-nav">
+                <button class="tab-btn-nav keyboard-tab active" data-tab="keyboard">🎹 Keyboard</button>
+                <button class="tab-btn-nav composer-tab" data-tab="composer">🎵 AI Composer</button>
+                <button class="tab-btn-nav transcriber-tab" data-tab="transcriber">🎤 AI Transcriber</button>
+                <button class="tab-btn-nav chord-tab" data-tab="chord">🎶 Chord Progression</button>
+                <button class="tab-btn-nav tutorial-btn" id="tutorialBtn">📖 Tutorial</button>
+            </div>
+
+            <!-- TAB 1: KEYBOARD -->
+            <div class="tab-content-main active" id="tab-keyboard">
+                <div class="keyboard-wrapper">
+                    <div class="keyboard-container" id="keyboardContainer"></div>
+                </div>
+                <div class="status" id="statusDisplay">Klik tuts atau tekan tombol untuk mendengar nada</div>
+
+                <div class="controls">
+                    <label class="active-mode" id="singleModeLabel">
+                        <input type="radio" name="playMode" value="single" checked /> Nada Tunggal
+                    </label>
+                    <label id="chordModeLabel">
+                        <input type="radio" name="playMode" value="chord" /> Akord
+                    </label>
+                    <div class="mode-desc-group">
+                        <span class="mode-label">🎯 Mode:</span>
+                        <span class="mode-badge-desc">Deskripsi</span>
+                    </div>
+                    <span class="effect-label">Oktaf:</span>
+                    <select id="octaveSelector">
+                        <option value="3">3 Oktaf</option>
+                        <option value="4" selected>4 Oktaf</option>
+                        <option value="5">5 Oktaf</option>
+                    </select>
+                    <span class="effect-label">🎹 Instrumen:</span>
+                    <select id="instrumentSelector">
+                        <option value="sine">Sine</option>
+                        <option value="square">Square</option>
+                        <option value="sawtooth">Sawtooth</option>
+                        <option value="triangle">Triangle</option>
+                        <option value="organ">Organ</option>
+                        <option value="piano">🎹 Piano</option>
+                        <option value="flute">🎵 Flute</option>
+                        <option value="trumpet">🎺 Trumpet</option>
+                    </select>
+                    <div class="effect-group">
+                        <span class="effect-label">🌊 Reverb:</span>
+                        <input type="range" id="reverbMix" min="0" max="100" value="20" />
+                        <span id="reverbVal" style="font-size:0.65rem;color:#aaa;min-width:25px;">20%</span>
+                    </div>
+                    <div class="effect-group">
+                        <span class="effect-label">⏳ Delay:</span>
+                        <input type="range" id="delayMix" min="0" max="100" value="0" />
+                        <span id="delayVal" style="font-size:0.65rem;color:#aaa;min-width:25px;">0%</span>
+                    </div>
+                    <div class="effect-group" style="background:#2a1a3e; border:1px solid #6c2bd9;">
+                        <span class="effect-label" style="color:#d4a0ff;">🔊 Amplifier:</span>
+                        <input type="range" id="ampSlider" min="50" max="300" value="100" style="accent-color:#b388ff;" />
+                        <span id="ampVal" style="font-size:0.7rem;color:#d4a0ff;min-width:35px;font-weight:bold;">1.0x</span>
+                    </div>
+                    <button class="btn btn-primary" id="playMayorBtn">▶ Mayor</button>
+                    <button class="btn btn-secondary" id="playMinorBtn">▶ Minor</button>
+                    <button class="btn btn-danger" id="stopBtn">⏹ Stop</button>
+                    <button class="btn btn-success" id="resetBtn">↺ Reset</button>
+                    <span class="chord-info" id="modeIndicator">🎵 Mode: Tunggal</span>
+                </div>
+
+                <div class="desc-area" id="descArea">
+                    <textarea id="descInput" placeholder="Contoh: Ciptakan melodi yang perlahan meningkat, dengan nada-nada tinggi dan suasana romantis..."></textarea>
+                    <div class="hint">💡 Tulis deskripsi melodi, pilih mode Input, lalu klik Generate & Play.</div>
+                    <div class="desc-controls">
+                        <label>🎭 Mood:
+                            <select id="descMoodSelect">
+                                <option value="happy">Happy</option>
+                                <option value="sad" selected>Sad</option>
+                                <option value="romantic">Romantic</option>
+                                <option value="mysterious">Mysterious</option>
+                                <option value="energetic">Energetic</option>
+                                <option value="calm">Calm</option>
+                            </select>
+                        </label>
+                        <label>🎼 Skala:
+                            <select id="descScaleSelect">
+                                <option value="mayor">Mayor</option>
+                                <option value="minor">Minor</option>
+                            </select>
+                        </label>
+                        <label>🎯 Mode Input:
+                            <select id="descInputMode">
+                                <option value="deskripsi">Deskripsi</option>
+                                <option value="melodi">Melodi</option>
+                            </select>
+                        </label>
+                        <button class="btn btn-primary" id="descGenerateBtn">🎵 Generate & Play</button>
+                        <button class="btn btn-danger" id="descStopBtn">⏹ Stop</button>
+                    </div>
+                    <div id="melodyResultArea" style="display:none; margin-top:10px;">
+                        <div class="melody-result" id="melodyResultDisplay">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: AI COMPOSER -->
+            <div class="tab-content-main" id="tab-composer">
+                <div class="ai-container">
+                    <h3>🎵 AI Music Composer</h3>
+                    <p style="color:#aaa;margin-bottom:10px;font-size:0.85rem;">Ciptakan melodi otomatis dengan AI (A4 = 440 Hz)</p>
+                    <div class="ai-mode-radio" id="aiModeRadio">
+                        <span style="color:#aaa;font-size:0.75rem;">🎯 Mode Input:</span>
+                        <label id="aiDescModeLabel" class="active-ai-mode">
+                            <input type="radio" name="aiInputMode" value="deskripsi" checked /> Deskripsi
+                        </label>
+                        <label id="aiPromptModeLabel">
+                            <input type="radio" name="aiInputMode" value="prompt" /> Prompt AI
+                        </label>
+                        <span id="aiModeBadge" class="ai-mode-badge desc">Mode: Deskripsi</span>
+                    </div>
+                    <div class="ai-input-area show" id="aiDescArea">
+                        <div class="input-group">
+                            <label>📝 Deskripsi Melodi</label>
+                            <textarea id="aiDescInput" placeholder="Contoh: melodi yang perlahan meningkat, dengan nada-nada tinggi dan suasana romantis..."></textarea>
+                            <div class="hint">💡 Tulis deskripsi melodi yang diinginkan. Sistem akan mensimulasikannya.</div>
+                        </div>
+                    </div>
+                    <div class="ai-input-area" id="aiPromptArea">
+                        <div class="input-group">
+                            <label>🔑 OpenAI API Key</label>
+                            <input type="password" id="aiApiKeyInput" placeholder="sk-... (masukkan API Key OpenAI Anda)" />
+                            <div class="api-hint">
+                                💡 Dapatkan API Key di <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>🤖 Prompt untuk AI Chatbot</label>
+                            <textarea id="aiPromptInput" placeholder="Contoh: Ciptakan melodi jazz yang romantis dengan tempo sedang, menggunakan skala minor..."></textarea>
+                            <div class="hint">💡 Tulis prompt spesifik untuk AI. AI akan menciptakan melodi berdasarkan prompt ini.</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="color:#aaa;display:block;margin-bottom:3px;font-size:0.8rem;">🎭 Mood / Suasana</label>
+                        <div class="mood-tags" id="moodTags">
+                            <span class="mood-tag" data-mood="happy">😊 Happy</span>
+                            <span class="mood-tag active" data-mood="sad">😢 Sad</span>
+                            <span class="mood-tag" data-mood="romantic">🥰 Romantic</span>
+                            <span class="mood-tag" data-mood="mysterious">🔮 Mysterious</span>
+                            <span class="mood-tag" data-mood="energetic">⚡ Energetic</span>
+                            <span class="mood-tag" data-mood="calm">🌊 Calm</span>
+                        </div>
+                    </div>
+                    <div class="ai-row">
+                        <div>
+                            <label>🎼 Skala</label>
+                            <select id="aiScaleSelect">
+                                <option value="mayor">Mayor (E)</option>
+                                <option value="minor">Minor (A)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>⏱️ Tempo (BPM)</label>
+                            <select id="aiTempoSelect">
+                                <option value="60">Lambat (60)</option>
+                                <option value="90">Sedang (90)</option>
+                                <option value="120" selected>Cepat (120)</option>
+                                <option value="160">Sangat Cepat (160)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                        <button class="btn btn-primary" id="aiGenerateBtn">🚀 Generate</button>
+                        <button class="btn btn-success" id="aiPlayBtn" disabled>▶ Play</button>
+                        <button class="btn btn-danger" id="aiStopBtn" disabled>⏹ Stop</button>
+                        <button class="btn btn-secondary" id="aiClearBtn">🗑️ Clear</button>
+                    </div>
+                    <div id="aiResultArea" style="display:none;background:#0d0d1a;border-radius:12px;padding:15px;margin-top:10px;">
+                        <h4 style="color:#f5a623;margin-bottom:8px;font-size:0.95rem;">🎶 Melodi Hasil</h4>
+                        <div id="aiMelodyDisplay" class="ai-result">-</div>
+                        <div style="display:flex;gap:15px;margin-top:8px;">
+                            <span style="color:#888;font-size:0.8rem;" id="aiNoteCount">Jumlah nada: 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: AI TRANSCRIBER -->
+            <div class="tab-content-main" id="tab-transcriber">
+                <div class="ai-container">
+                    <h3>🎤 AI Audio Transcriber <span class="badge">20 Nada/Oktaf</span> <span id="modeBadge" class="mode-indicator standard">⚡ Standar</span></h3>
+                    <p style="color:#aaa;margin-bottom:10px;font-size:0.85rem;">Rekam lagu atau suara (maks. 22 menit), AI akan menuliskannya (A4 = 440 Hz)</p>
+                    <div class="error-message" id="errorMessage">
+                        ⚠️ <span id="errorText">Terjadi kesalahan. Pastikan browser mengizinkan akses mikrofon.</span>
+                    </div>
+                    <div class="record-area" id="recordArea">
+                        <button class="record-btn" id="recordBtn">🎤</button>
+                        <div class="timer" id="timerDisplay">00:00 / 22:00</div>
+                        <div class="waveform" id="waveformContainer"><canvas id="waveformCanvas"></canvas></div>
+                        <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
+                    </div>
+                    <div class="transcriber-controls">
+                        <div class="radio-group">
+                            <label id="standardLabel" class="active-radio"><input type="radio" name="algorithm" value="standard" checked /> Standar</label>
+                            <label id="improvedLabel"><input type="radio" name="algorithm" value="improved" /> Improved (YIN)</label>
+                        </div>
+                        <label>🎯 Mode:</label>
+                        <select id="modeSelect">
+                            <option value="vocal">Vokal (200-800 Hz)</option>
+                            <option value="instrument">Instrumental (80-1200 Hz)</option>
+                            <option value="full" selected>Full Range (60-1800 Hz)</option>
+                        </select>
+                        <label>🎚️ Sensitivitas:</label>
+                        <select id="sensitivitySelect">
+                            <option value="0.008">Sangat Tinggi</option>
+                            <option value="0.012" selected>Tinggi</option>
+                            <option value="0.018">Sedang</option>
+                            <option value="0.03">Rendah (kurang noise)</option>
+                        </select>
+                        <span id="filterContainer" style="display:none;">
+                            <label>🧹 Filter:</label>
+                            <select id="filterSelect">
+                                <option value="highpass" selected>High-pass (kurangi noise)</option>
+                                <option value="none">Tanpa filter</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="status" id="status">🔴 Klik tombol mikrofon untuk mulai merekam (maks. 22 menit)</div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+                        <button class="btn btn-success" id="transcribeBtn" disabled>🧠 AI Transcribe</button>
+                        <button class="btn btn-secondary" id="playResultBtn" disabled>▶ Play Hasil</button>
+                        <button class="btn btn-primary" id="sendToChordBtn" disabled>📥 Kirim ke Chord Progression</button>
+                        <button class="btn btn-danger" id="clearTranscribeBtn">🗑️ Clear</button>
+                    </div>
+                    <div id="transcribeResult" style="display:none; background:#0d0d1a; border-radius:12px; padding:15px; margin-top:15px;">
+                        <h4 style="color:#f5a623;margin-bottom:8px;font-size:0.95rem;">📝 Hasil Transkripsi (20 Nada per Oktaf)</h4>
+                        <div id="transcribedDisplay" class="ai-result">-</div>
+                        <div class="info-row">
+                            <span id="transcribeInfo">Jumlah nada: 0</span>
+                            <span id="durationInfo">Durasi rekaman: 0 detik</span>
+                            <span id="algoInfo">Algoritma: Standar</span>
+                        </div>
+                        <div class="warning-text">💡 Nada dengan tanda <b>#</b> adalah nada kromatik (tuts hitam).</div>
+                        <div class="warning-text">⚠️ Rekaman panjang membutuhkan waktu analisis lebih lama.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: CHORD PROGRESSION -->
+            <div class="tab-content-main" id="tab-chord">
+                <div class="ai-container">
+                    <h3>🎶 Chord Progression Generator</h3>
+                    <p style="color:#aaa;margin-bottom:10px;font-size:0.85rem;">Ubah hasil transkripsi nada menjadi progresi akord (20 nada per oktaf)</p>
+                    <div style="margin-bottom:10px;">
+                        <label style="color:#aaa;display:block;margin-bottom:3px;font-size:0.8rem;">📝 Masukkan Hasil Transkripsi Nada:</label>
+                        <textarea id="chordInput" placeholder="Contoh: E3 → G3 → H3 → E3 → G3 → H3 → E3 ..."></textarea>
+                        <div style="color:#666;font-size:0.7rem;margin-top:3px;">💡 Copy hasil transkripsi dari AI Transcriber</div>
+                    </div>
+                    <div class="ai-row">
+                        <div>
+                            <label>🎯 Mode Analisis:</label>
+                            <select id="chordModeSelect">
+                                <option value="auto">Otomatis (Deteksi)</option>
+                                <option value="mayor">Mayor</option>
+                                <option value="minor">Minor</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>📊 Jumlah Akord:</label>
+                            <select id="chordCountSelect">
+                                <option value="4">4 Akord (Sederhana)</option>
+                                <option value="6">6 Akord</option>
+                                <option value="8" selected>8 Akord (Lengkap)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                        <button class="btn btn-primary" id="chordGenerateBtn">🎵 Generate Progresi</button>
+                        <button class="btn btn-secondary" id="chordClearBtn">🗑️ Clear</button>
+                    </div>
+                    <div id="chordResult" style="display:none;background:#0d0d1a;border-radius:12px;padding:15px;">
+                        <h4 style="color:#f5a623;margin-bottom:8px;font-size:0.95rem;">🎶 Hasil Analisis</h4>
+                        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px;">
+                            <span style="color:#aaa;font-size:0.85rem;">🎯 Nada Dasar: <span id="chordKey" style="color:#ffd700;font-weight:bold;">-</span></span>
+                            <span style="color:#aaa;font-size:0.85rem;">🎼 Skala: <span id="chordScale" style="color:#f5a623;font-weight:bold;">-</span></span>
+                        </div>
+                        <div id="chordGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFO PANEL -->
+            <div class="info-section">
+                <h2>📖 Informasi & Referensi</h2>
+                <div class="info-tabs">
+                    <button class="tab-btn active" data-tab="teori">Teori</button>
+                    <button class="tab-btn" data-tab="freq">Frekuensi</button>
+                    <button class="tab-btn" data-tab="skala">Skala</button>
+                    <button class="tab-btn" data-tab="chord">Akord</button>
+                    <button class="tab-btn" data-tab="simulasi">🎵 Simulasi Lagu</button>
+                    <button class="tab-btn" data-tab="tentang">Tentang</button>
+                    <button class="tab-btn" data-tab="portfolio">💼 Portfolio</button>
+                </div>
+                <div class="tab-content-info" id="tabContent"></div>
+            </div>
+
+            <div class="footer-note">
+                <div style="margin-bottom: 5px;">
+                    📄 <a href="https://github.com/SRPakpahanSST/pmd-musik-12tet/blob/f02799fc79dce4e9089721d248c97896764538e6/Karya_Tulis_12TET_20Nada.md" target="_blank">Baca Karya Ilmiah Lengkap</a>
+                </div>
+                <div style="margin-bottom: 5px;">
+                    🎵 <a href="https://musikbarupmd.blogspot.com/2024/11/simulasi-contoh-lagu-memakai-audio.html?m=1" target="_blank">Simulasi Lagu KJ 33 (Sistem 12-TET 20 Nada)</a>
+                </div>
+                <div style="margin-bottom: 5px;">
+                    📖 <a href="tutorial_notasi_angka.html" target="_blank">Tutorial Notasi Angka</a>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.75rem; color: #666;">
+                    Berdasarkan Karya Tulis Ilmiah: Eksplorasi Musik Sistem 12-TET (20 Nada per Oktaf) — Sukma Riadi Pakpahan, SST
+                </div>
+            </div>
+
+            <!-- ===== BAGIAN PARTITUR NOTASI ANGKA ===== -->
+            <div id="partitur-container">
+                <div id="partitur-section">
+                    <h2>🎼 Partitur Notasi Angka (12-TET 20 Nada)</h2>
+                    <div class="partitur-controls">
+                        <label>Nada Dasar:</label>
+                        <select id="nada-dasar">
+                            <option value="E">E</option>
+                            <option value="E#">E#</option>
+                            <option value="F">F</option>
+                            <option value="F#">F#</option>
+                            <option value="G">G</option>
+                            <option value="G#">G#</option>
+                            <option value="H">H</option>
+                            <option value="H#">H#</option>
+                            <option value="I">I</option>
+                            <option value="J">J</option>
+                            <option value="J#">J#</option>
+                            <option value="K">K</option>
+                            <option value="K#">K#</option>
+                            <option value="A">A</option>
+                            <option value="A#">A#</option>
+                            <option value="B">B</option>
+                            <option value="B#">B#</option>
+                            <option value="C">C</option>
+                            <option value="C#">C#</option>
+                            <option value="D">D</option>
+                        </select>
+                        <label>Skala:</label>
+                        <select id="mayor-minor">
+                            <option value="mayor">Mayor (E=1)</option>
+                            <option value="minor">Minor (A=1)</option>
+                        </select>
+                        <button id="tampilkan-akord">Tampilkan Akord</button>
+                        <label>Pilih Akord:</label>
+                        <select id="pilih-akord" disabled>
+                            <option value="">-- Pilih Akord --</option>
+                        </select>
+                    </div>
+
+                    <!-- ====== SEMUA SIMBOL NOTASI ANGKA (LENGKAP) ====== -->
+                    <div class="symbol-palette">
+                    <!-- ===== 1. ANGKA DASAR NOTASI (1-11) ===== -->
+                    <!-- Simbol Angka 1-11 -->
+                    <div class="symbol-palette">
+                        <button onclick="insertSymbol('1')" title="Nada 1">1</button>
+                        <button onclick="insertSymbol('2')" title="Nada 2">2</button>
+                        <button onclick="insertSymbol('3')" title="Nada 3">3</button>
+                        <button onclick="insertSymbol('4')" title="Nada 4">4</button>
+                        <button onclick="insertSymbol('5')" title="Nada 5">5</button>
+                        <button onclick="insertSymbol('6')" title="Nada 6">6</button>
+                        <button onclick="insertSymbol('7')" title="Nada 7">7</button>
+                        <button onclick="insertSymbol('8')" title="Nada 8 (20-nada)">8</button>
+                        <button onclick="insertSymbol('9')" title="Nada 9 (20-nada)">9</button>
+                        <button onclick="insertSymbol('10')" title="Nada 10 (20-nada)">10</button>
+                        <button onclick="insertSymbol('11')" title="Nada 11 (20-nada)">11</button>
+                    </div>
+
+                    <!-- Simbol Notasi Lengkap -->
+                    <div class="symbol-palette">
+                    <!-- ===== 2. TANDA OKTAF (TITIK DI ATAS DAN BAWAH) ===== -->
+                        <button onclick="insertSymbol('˙')" title="Oktaf tinggi 1 (titik di atas)">˙</button>
+                        <button onclick="insertSymbol('¨')" title="Oktaf tinggi 2 (dua titik di atas)">¨</button>
+                        <button onclick="insertSymbol('•')" title="Staccato (titik)">•</button>
+                        <!-- Titik di bawah (oktaf rendah) menggunakan kombinasi karakter -->
+                        <button onclick="insertSymbol('1̣')" title="Oktaf rendah 1 (titik di bawah)">1̣</button>
+                        <button onclick="insertSymbol('2̣')" title="Oktaf rendah 2 (titik di bawah)">2̣</button>
+                        <button onclick="insertSymbol('3̣')" title="Oktaf rendah 3 (titik di bawah)">3̣</button>
+
+                        <!-- ===== 3. GARIS RITME (BEAM) ===== -->
+                        <button onclick="insertSymbol('▔')" title="Satu garis di atas (not 1/8)">▔</button>
+                        <button onclick="insertSymbol('▔▁')" title="Dua garis di atas (not 1/16)">▔▁</button>
+                        <button onclick="insertSymbol('‾')" title="Satu garis alternatif (not 1/8)">‾</button>
+                        <button onclick="insertSymbol('‾_')" title="Dua garis alternatif (not 1/16)">‾_</button>
+                        <button onclick="insertSymbol('_')" title="Garis bawah (not 1/2 ketuk)">_</button>
+                        <button onclick="insertSymbol('__')" title="Dua garis bawah (not 1/4 ketuk)">__</button>
+                        <!-- Titik perpanjangan -->
+                        <button onclick="insertSymbol('.')" title="Titik perpanjangan (1 ketuk + 1/2)">.</button>
+                        <button onclick="insertSymbol('..')" title="Dua titik perpanjangan (1 ketuk + 3/4)">..</button>
+                        <!-- Tanda triplet (ditulis manual) -->
+                        <button onclick="insertSymbol('3')" title="Triplet (3 nada dalam 2 ketuk)">3</button>
+
+                        <!-- ===== 4. TANDA BIRAMA, ULANG, STRUKTUR ===== -->
+                        <button onclick="insertSymbol('|')" title="Garis birama">|</button>
+                        <button onclick="insertSymbol('‖')" title="Garis birama ganda">‖</button>
+                        <button onclick="insertSymbol('(|')" title="Birama buka">(|</button>
+                        <button onclick="insertSymbol('|)')" title="Birama tutup">|)</button>
+                        <button onclick="insertSymbol('||:')" title="Awal repeat">||:</button>
+                        <button onclick="insertSymbol(':||')" title="Akhir repeat">:||</button>
+                        <button onclick="insertSymbol('||')" title="Tanda tutup lagu (double bar)">||</button>
+                        <button onclick="insertSymbol('𝄋')" title="Segno (tanda lompat)">𝄋</button>
+                        <button onclick="insertSymbol('𝄌')" title="Coda (tanda lompat)">𝄌</button>
+                        <button onclick="insertSymbol('D.S.')" title="Dal Segno (kembali ke Segno)">D.S.</button>
+                        <button onclick="insertSymbol('D.C.')" title="Da Capo (kembali ke awal)">D.C.</button>
+                        <button onclick="insertSymbol('To Coda')" title="Lompat ke Coda">To Coda</button>
+
+                        <!-- ===== 5. EKSPRESI, ARTIKULASI, DINAMIKA ===== -->
+                        <button onclick="insertSymbol('>')" title="Aksen (tekan kuat)">></button>
+                        <button onclick="insertSymbol('^')" title="Aksen (tekan kuat)">^</button>
+                        <button onclick="insertSymbol('<')" title="Crescendo (menguat)"><</button>
+                        <button onclick="insertSymbol('>')" title="Decrescendo (melemah)">></button>
+                        <button onclick="insertSymbol('tr')" title="Trill">tr</button>
+                        <button onclick="insertSymbol('~')" title="Trill (alternatif)">~</button>
+                        <button onclick="insertSymbol('⌣')" title="Fermata (tahan)">⌣</button>
+                        <button onclick="insertSymbol('𝄐')" title="Fermata (simbol musik)">𝄐</button>
+                        <button onclick="insertSymbol("'")" title="Aksen (tanda petik)">'</button>
+
+                        <!-- ===== 6. SLUR, LEGATO, GLISSANDO ===== -->
+                        <button onclick="insertSymbol('/')" title="Slur (legato)">/</button>
+                        <button onclick="insertSymbol('\\')" title="Slur terbalik">\</button>
+                        <button onclick="insertSymbol('‿')" title="Legato bawah">‿</button>
+                        <button onclick="insertSymbol('↗')" title="Glissando naik">↗</button>
+                        <button onclick="insertSymbol('↘')" title="Glissando turun">↘</button>
+
+                        <!-- ===== 7. TANDA ARAH NADA ===== -->
+                        <button onclick="insertSymbol('↑')" title="Nada naik">↑</button>
+                        <button onclick="insertSymbol('↓')" title="Nada turun">↓</button>
+
+                        <!-- ===== 8. KRUSIS, MOL, NATURAL ===== -->
+                        <button onclick="insertSymbol('♯')" title="Kruis (sharp)">♯</button>
+                        <button onclick="insertSymbol('♭')" title="Mol (flat)">♭</button>
+                        <button onclick="insertSymbol('♮')" title="Natural (pugar)">♮</button>
+
+                        <!-- ===== 9. NADA DIAM (REST) ===== -->
+                        <button onclick="insertSymbol('0')" title="Nada diam (rest)">0</button>
+                        <button onclick="insertSymbol('0_')" title="Nada diam 1/2 ketuk">0_</button>
+                        <button onclick="insertSymbol('0.')" title="Nada diam 1,5 ketuk">0.</button>
+
+                        <!-- ===== 10. ISTILAH TEMPO & EKSPRESI (TEKS) ===== -->
+                        <button onclick="insertSymbol('Allegro')" title="Tempo cepat">Allegro</button>
+                        <button onclick="insertSymbol('Moderato')" title="Tempo sedang">Moderato</button>
+                        <button onclick="insertSymbol('Adagio')" title="Tempo lambat">Adagio</button>
+                        <button onclick="insertSymbol('Presto')" title="Tempo sangat cepat">Presto</button>
+                        <button onclick="insertSymbol('rit.')" title="Ritardando (melambat)">rit.</button>
+                        <button onclick="insertSymbol('accel.')" title="Accelerando (mempercepat)">accel.</button>
+                        <button onclick="insertSymbol('a tempo')" title="Kembali ke tempo semula">a tempo</button>
+                        <button onclick="insertSymbol('pp')" title="Pianissimo (sangat lembut)">pp</button>
+                        <button onclick="insertSymbol('p')" title="Piano (lembut)">p</button>
+                        <button onclick="insertSymbol('mf')" title="Mezzo forte (sedang kuat)">mf</button>
+                        <button onclick="insertSymbol('f')" title="Forte (kuat)">f</button>
+                        <button onclick="insertSymbol('ff')" title="Fortissimo (sangat kuat)">ff</button>
+                    </div>
+            
+                    <!-- Simbol Notasi Pelengkap -->
+                    <div class="symbol-palette">              
+                        <!-- PERBAIKAN TANDA PETIK: Gunakan JavaScript escape -->
+                        <button onclick="insertSymbol(String.fromCharCode(39))" title="Aksen">'</button>                     
+                        <!-- Garis di atas angka (lebih jelas) -->
+                        <button onclick="insertSymbol('1̅2̅')" title="Garis satu di atas 2 not (1/8)">1̅2̅</button>
+                        <button onclick="insertSymbol('1̿2̿')" title="Garis dua di atas 2 not (1/16)">1̿2̿</button>
+                        <button onclick="insertSymbol('⁼')" title="Dua garis tipis di atas - not 1/16">⁼</button>                       
+                    </div>
+
+                    <textarea id="partitur-area" placeholder="Tulis partitur notasi angka di sini..."></textarea>
+
+                    <div class="partitur-actions">
+                        <button onclick="simpanPartitur()">💾 Simpan</button>
+                        <button onclick="bukaPartitur()">📂 Buka</button>
+                        <button onclick="cetakPartitur()">🖨️ Cetak</button>
+                        <button onclick="bersihkanPartitur()">🗑️ Bersihkan</button>
+                    </div>
+                    <div id="status-message"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // SPLASH → APP
+        // ================================================================
+        const welcome = document.getElementById('welcome');
+        const app = document.getElementById('app');
+        const startBtn = document.getElementById('startBtn');
+
+        startBtn.addEventListener('click', function() {
+            welcome.classList.add('hidden');
+            app.classList.add('show');
+            initAudio();
+        });
+
+        // ================================================================
+        // TAB NAVIGASI
+        // ================================================================
+        const tabBtns = document.querySelectorAll('.tab-btn-nav');
+        const tabContents = {
+            keyboard: document.getElementById('tab-keyboard'),
+            composer: document.getElementById('tab-composer'),
+            transcriber: document.getElementById('tab-transcriber'),
+            chord: document.getElementById('tab-chord')
+        };
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const tab = this.dataset.tab;
+                Object.keys(tabContents).forEach(key => {
+                    tabContents[key].classList.toggle('active', key === tab);
+                });
+            });
+        });
+
+        // ================================================================
+        // DATA FREKUENSI 12-TET (20 NADA PER OKTAF)
+        // ================================================================
+        const FREQ_MAP = {
+            'C2': 60.90000, 'C#2': 64.34000, 'D2': 67.97400,
+            'E3': 71.81300, 'E#3': 75.86800, 'F3': 80.15200, 'F#3': 84.67800,
+            'G3': 89.46000, 'G#3': 94.51100, 'H3': 99.84800, 'H#3': 105.48600,
+            'I3': 111.44300, 'J3': 117.73500, 'J#3': 124.38400, 'K3': 131.40700,
+            'K#3': 138.82700, 'A3': 146.66700, 'A#3': 154.94900, 'B3': 163.69800,
+            'B#3': 172.94200, 'C3': 182.70700, 'C#3': 193.02400, 'D3': 203.92400,
+            'E4': 215.43900, 'E#4': 227.60400, 'F4': 240.45600, 'F#4': 254.03400,
+            'G4': 268.37900, 'G#4': 283.53300, 'H4': 299.54400, 'H#4': 316.45800,
+            'I4': 334.32800, 'J4': 353.20600, 'J#4': 373.15100, 'K4': 394.22200,
+            'K#4': 416.48200, 'A4': 440.00000, 'A#4': 464.84600, 'B4': 491.09400,
+            'B#4': 518.82500, 'C4': 548.12200, 'C#4': 579.07300, 'D4': 611.77100,
+            'E5': 646.31600, 'E#5': 682.81200, 'F5': 721.36900, 'F#5': 762.10200,
+            'G5': 805.13600, 'G#5': 850.60000, 'H5': 898.63100, 'H#5': 949.37400,
+            'I5': 1002.98300, 'J5': 1059.61900, 'J#5': 1119.45300, 'K5': 1182.66500,
+            'K#5': 1249.44700, 'A5': 1320.00000, 'A#5': 1394.53700, 'B5': 1473.28300,
+            'B#5': 1556.47500, 'C5': 1644.36500, 'C#5': 1737.21800, 'D5': 1835.31400,
+            'E6': 1938.94900, 'E#6': 2048.43600, 'F6': 2164.10600, 'F#6': 2286.30700,
+            'G6': 2415.40900, 'G#6': 2551.80000, 'H6': 2695.89400, 'H#6': 2848.12300,
+            'I6': 3008.94900, 'J6': 3178.85700, 'J#6': 3358.35800, 'K6': 3547.99600,
+            'K#6': 3748.34100, 'A6': 3960.00000, 'A#6': 4183.61100, 'B6': 4419.84800,
+            'B#6': 4669.42500, 'C6': 4933.09500, 'C#6': 5211.65300, 'D6': 5505.94200
+        };
+
+        // ================================================================
+        // SISTEM 20 NADA PER OKTAF
+        // ================================================================
+        const NOTES_20 = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
+        const MAYOR_INTERVALS = [2,2,2,2,1,2,2,2,2,2,1];
+        const MINOR_INTERVALS = [2,2,2,1,2,2,2,2,1,2,2];
+
+        function buildScale20(rootIdx, intervals) {
+            const scale = [rootIdx];
+            let current = rootIdx;
+            for (let step of intervals) {
+                current = (current + step) % 20;
+                scale.push(current);
+            }
+            return scale;
+        }
+
+        function getNoteName20(idx) { return NOTES_20[idx % 20]; }
+
+        function buildChord20(rootIdx, type) {
+            let third = 4, fifth = 7;
+            if (type === 'minor') third = 3;
+            else if (type === 'diminished') { third = 3; fifth = 6; }
+            return [getNoteName20(rootIdx), getNoteName20((rootIdx + third) % 20), getNoteName20((rootIdx + fifth) % 20)];
+        }
+
+        // ================================================================
+        // AUDIO ENGINE
+        // ================================================================
+        let audioCtx = null;
+        let activeOscillators = [];
+        let isPlaying = false;
+        let playMode = 'single';
+        let masterGain = null;
+        let reverbNode = null, delayNode = null, delayFeedback = null;
+        let dryGain = null, wetGain = null, delayDryGain = null, delayWetGain = null;
+        let currentInstrument = 'organ';
+        let reverbMix = 0.2, delayMix = 0.0;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                setupEffects();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function setupEffects() {
+            if (!audioCtx) return;
+            masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+            reverbNode = audioCtx.createConvolver();
+            const impulseLength = 2.0, sampleRate = audioCtx.sampleRate;
+            const numSamples = Math.floor(impulseLength * sampleRate);
+            const impulse = audioCtx.createBuffer(2, numSamples, sampleRate);
+            for (let ch = 0; ch < 2; ch++) {
+                const data = impulse.getChannelData(ch);
+                for (let i = 0; i < numSamples; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sampleRate * 0.3));
+                }
+            }
+            reverbNode.buffer = impulse;
+            delayNode = audioCtx.createDelay(2.0);
+            delayNode.delayTime.setValueAtTime(0.3, audioCtx.currentTime);
+            delayFeedback = audioCtx.createGain();
+            delayFeedback.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            dryGain = audioCtx.createGain();
+            wetGain = audioCtx.createGain();
+            delayDryGain = audioCtx.createGain();
+            delayWetGain = audioCtx.createGain();
+            dryGain.connect(masterGain);
+            wetGain.connect(reverbNode);
+            reverbNode.connect(masterGain);
+            delayNode.connect(delayWetGain);
+            delayWetGain.connect(masterGain);
+            delayNode.connect(delayFeedback);
+            delayFeedback.connect(delayNode);
+            delayDryGain.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+            updateReverbMix(reverbMix);
+            updateDelayMix(delayMix);
+            const ampSlider = document.getElementById('ampSlider');
+            if (ampSlider) masterGain.gain.setValueAtTime(parseInt(ampSlider.value) / 100, audioCtx.currentTime);
+        }
+
+        function updateReverbMix(v) {
+            reverbMix = Math.max(0, Math.min(1, v));
+            if (dryGain && wetGain) {
+                dryGain.gain.setValueAtTime(1 - reverbMix, audioCtx.currentTime);
+                wetGain.gain.setValueAtTime(reverbMix, audioCtx.currentTime);
+            }
+        }
+
+        function updateDelayMix(v) {
+            delayMix = Math.max(0, Math.min(1, v));
+            if (delayDryGain && delayWetGain) {
+                delayDryGain.gain.setValueAtTime(1 - delayMix, audioCtx.currentTime);
+                delayWetGain.gain.setValueAtTime(delayMix, audioCtx.currentTime);
+            }
+        }
+
+        function createInstrumentOscillator(freq, type) {
+            const ctx = audioCtx;
+            const now = ctx.currentTime;
+            let osc, osc2, osc3, gain2, gain3;
+            switch (type) {
+                case 'organ':
+                    osc = ctx.createOscillator(); osc.type = 'sawtooth';
+                    osc2 = ctx.createOscillator(); osc2.type = 'square'; osc2.frequency.setValueAtTime(freq * 0.999, now);
+                    gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.5, now); osc2.connect(gain2);
+                    return { mainOsc: osc, extraOsc: osc2, extraGain: gain2 };
+                case 'piano':
+                    osc = ctx.createOscillator(); osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, now);
+                    osc2 = ctx.createOscillator(); osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 2.0, now);
+                    gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.08, now); osc2.connect(gain2);
+                    osc3 = ctx.createOscillator(); osc3.type = 'sine'; osc3.frequency.setValueAtTime(freq * 3.0, now);
+                    gain3 = ctx.createGain(); gain3.gain.setValueAtTime(0.04, now); osc3.connect(gain3);
+                    return { mainOsc: osc, extraOsc: osc2, extraOsc2: osc3, extraGain: gain2, extraGain2: gain3 };
+                case 'flute':
+                    osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now);
+                    osc2 = ctx.createOscillator(); osc2.type = 'sine'; osc2.frequency.setValueAtTime(freq * 1.003, now);
+                    gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.15, now); osc2.connect(gain2);
+                    return { mainOsc: osc, extraOsc: osc2, extraGain: gain2 };
+                case 'trumpet':
+                    osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, now);
+                    osc2 = ctx.createOscillator(); osc2.type = 'square'; osc2.frequency.setValueAtTime(freq * 0.999, now);
+                    gain2 = ctx.createGain(); gain2.gain.setValueAtTime(0.4, now); osc2.connect(gain2);
+                    osc3 = ctx.createOscillator(); osc3.type = 'sawtooth'; osc3.frequency.setValueAtTime(freq * 2.0, now);
+                    gain3 = ctx.createGain(); gain3.gain.setValueAtTime(0.1, now); osc3.connect(gain3);
+                    return { mainOsc: osc, extraOsc: osc2, extraOsc2: osc3, extraGain: gain2, extraGain2: gain3 };
+                default:
+                    osc = ctx.createOscillator(); osc.type = type;
+                    return { mainOsc: osc };
+            }
+        }
+
+        function playSingleNote(freq, duration = 0.6, instrumentType = null, soundType = 'melody') {
+            const useInstrument = instrumentType || currentInstrument;
+            try {
+                const ctx = initAudio();
+                const type = useInstrument;
+                const oscData = createInstrumentOscillator(freq, type);
+                const mainOsc = oscData.mainOsc;
+                const gain = ctx.createGain();
+                const now = ctx.currentTime;
+                gain.gain.setValueAtTime(0.001, now);
+                let attack = 0.03, decay = 0.15, sustain = 0.2, release = 0.01;
+                if (type === 'piano') { attack = 0.01; decay = 0.3; sustain = 0.15; release = 0.2; }
+                else if (type === 'flute') { attack = 0.05; decay = 0.2; sustain = 0.3; release = 0.05; }
+                else if (type === 'trumpet') { attack = 0.02; decay = 0.1; sustain = 0.35; release = 0.05; }
+                gain.gain.linearRampToValueAtTime(0.4, now + attack);
+                gain.gain.exponentialRampToValueAtTime(sustain, now + attack + decay);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + duration - release);
+                mainOsc.connect(gain);
+                gain.connect(dryGain);
+                gain.connect(wetGain);
+                const delayInput = ctx.createGain();
+                gain.connect(delayInput);
+                delayInput.connect(delayNode);
+                delayInput.connect(delayDryGain);
+                mainOsc._type = soundType;
+                if (oscData.extraOsc) {
+                    const eg = ctx.createGain();
+                    let extraVol = 0.3;
+                    if (type === 'piano') extraVol = 0.08;
+                    else if (type === 'flute') extraVol = 0.15;
+                    else if (type === 'trumpet') extraVol = 0.4;
+                    eg.gain.setValueAtTime(extraVol, now);
+                    oscData.extraOsc.connect(eg); eg.connect(gain);
+                    oscData.extraOsc.start(now); oscData.extraOsc.stop(now + duration);
+                    oscData.extraOsc._type = soundType; activeOscillators.push(oscData.extraOsc);
+                }
+                if (oscData.extraOsc2) {
+                    const eg2 = ctx.createGain();
+                    let extraVol2 = 0.04;
+                    if (type === 'piano') extraVol2 = 0.04;
+                    else if (type === 'trumpet') extraVol2 = 0.1;
+                    eg2.gain.setValueAtTime(extraVol2, now);
+                    oscData.extraOsc2.connect(eg2); eg2.connect(gain);
+                    oscData.extraOsc2.start(now); oscData.extraOsc2.stop(now + duration);
+                    oscData.extraOsc2._type = soundType; activeOscillators.push(oscData.extraOsc2);
+                }
+                mainOsc.start(now); mainOsc.stop(now + duration);
+                mainOsc._type = soundType; activeOscillators.push(mainOsc);
+                mainOsc.onended = () => {
+                    const idx = activeOscillators.indexOf(mainOsc);
+                    if (idx > -1) activeOscillators.splice(idx, 1);
+                };
+                return mainOsc;
+            } catch (e) { console.warn(e); return null; }
+        }
+
+        function stopAllSounds() {
+            activeOscillators.forEach(osc => { try { osc.stop(); } catch (e) {} });
+            activeOscillators = [];
+            isPlaying = false;
+            if (keyboardMelodyTimeout) { clearTimeout(keyboardMelodyTimeout); keyboardMelodyTimeout = null; }
+            keyboardMelodyPlaying = false;
+            document.getElementById('descGenerateBtn').disabled = false;
+            document.getElementById('descGenerateBtn').textContent = '🎵 Generate & Play';
+            if (isPlayingRecorded) {}
+        }
+
+        function stopChords() {
+            const toRemove = [];
+            activeOscillators.forEach(osc => {
+                if (osc._type === 'chord') { try { osc.stop(); } catch (e) {} toRemove.push(osc); }
+            });
+            activeOscillators = activeOscillators.filter(osc => !toRemove.includes(osc));
+        }
+
+        // ================================================================
+        // KEYBOARD GENERATION & RANGE
+        // ================================================================
+        function generateNoteSequence(octaveCount) {
+            const seq = [];
+            const octave2 = ['C2', 'C#2', 'D2'];
+            octave2.forEach(n => seq.push({ note: n, isBlack: n.includes('#') }));
+            for (let o = 3; o <= 2 + octaveCount - 1; o++) {
+                const notes = [
+                    'E' + o, 'E#' + o, 'F' + o, 'F#' + o, 'G' + o, 'G#' + o,
+                    'H' + o, 'H#' + o, 'I' + o, 'J' + o, 'J#' + o,
+                    'K' + o, 'K#' + o, 'A' + o, 'A#' + o,
+                    'B' + o, 'B#' + o, 'C' + o, 'C#' + o, 'D' + o
+                ];
+                notes.forEach(n => seq.push({ note: n, isBlack: n.includes('#') }));
+            }
+            return seq;
+        }
+
+        function generateChordRangeNotes() {
+            const seq = [];
+            const octave2 = ['C2', 'C#2', 'D2'];
+            octave2.forEach(n => seq.push({ note: n, isBlack: n.includes('#') }));
+            const octave3 = [
+                'E3', 'E#3', 'F3', 'F#3', 'G3', 'G#3', 'H3', 'H#3', 'I3',
+                'J3', 'J#3', 'K3', 'K#3', 'A3', 'A#3', 'B3', 'B#3'
+            ];
+            octave3.forEach(n => seq.push({ note: n, isBlack: n.includes('#') }));
+            return seq;
+        }
+
+        function renderKeyboard(noteSeq) {
+            container.innerHTML = '';
+            keyElements = {};
+            const whiteWidth = 30, whiteHeight = 155, blackWidth = 18, blackHeight = 95;
+            const startX = 10, yWhite = 10;
+            let whiteIndex = 0;
+            for (let i = 0; i < noteSeq.length; i++) {
+                const { note, isBlack } = noteSeq[i];
+                if (!isBlack) {
+                    const x = startX + whiteIndex * whiteWidth;
+                    const key = document.createElement('div'); key.className = 'key key-white';
+                    key.style.left = x + 'px'; key.style.top = yWhite + 'px';
+                    key.style.width = whiteWidth + 'px'; key.style.height = whiteHeight + 'px';
+                    const label = document.createElement('span'); label.className = 'key-label'; label.textContent = note;
+                    key.appendChild(label); key.dataset.note = note; key.dataset.freq = FREQ_MAP[note] || 0;
+                    key.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(note); });
+                    container.appendChild(key); keyElements[note] = key; whiteIndex++;
+                }
+            }
+            whiteIndex = 0;
+            for (let i = 0; i < noteSeq.length; i++) {
+                const { note, isBlack } = noteSeq[i];
+                if (!isBlack) whiteIndex++;
+                else {
+                    const x = startX + (whiteIndex - 1) * whiteWidth + whiteWidth - 9;
+                    const key = document.createElement('div'); key.className = 'key key-black';
+                    key.style.left = x + 'px'; key.style.top = yWhite + 'px';
+                    key.style.width = blackWidth + 'px'; key.style.height = blackHeight + 'px';
+                    const label = document.createElement('span'); label.className = 'key-label'; label.textContent = note;
+                    key.appendChild(label); key.dataset.note = note; key.dataset.freq = FREQ_MAP[note] || 0;
+                    key.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(note); });
+                    container.appendChild(key); keyElements[note] = key;
+                }
+            }
+            let posX = startX;
+            const widthOctave2 = 3 * whiteWidth;
+            const label2 = document.createElement('div'); label2.className = 'octave-label';
+            label2.style.left = posX + 'px'; label2.style.top = (yWhite + whiteHeight + 5) + 'px';
+            label2.style.width = widthOctave2 + 'px'; label2.textContent = 'Oktaf 2';
+            container.appendChild(label2);
+            posX += widthOctave2;
+            const widthOctave3 = 17 * whiteWidth;
+            const label3 = document.createElement('div'); label3.className = 'octave-label';
+            label3.style.left = posX + 'px'; label3.style.top = (yWhite + whiteHeight + 5) + 'px';
+            label3.style.width = widthOctave3 + 'px'; label3.textContent = 'Oktaf 3';
+            container.appendChild(label3);
+        }
+
+        function buildKeyboard(octaveCount) {
+            const noteSeq = generateNoteSequence(octaveCount);
+            renderKeyboard(noteSeq);
+            const lastOctave = 2 + octaveCount - 1;
+            statusDisplay.innerHTML = `🎹 ${octaveCount} oktaf (C2 sampai D${lastOctave}) — Klik tuts untuk bermain`;
+        }
+
+        function buildChordKeyboard() {
+            const noteSeq = generateChordRangeNotes();
+            renderKeyboard(noteSeq);
+            statusDisplay.innerHTML = `🎹 Fokus Akord: C2 – B#3 (20 nada) — tekan tuts untuk mengiringi melodi`;
+        }
+
+        // ================================================================
+        // REKAMAN MELODI
+        // ================================================================
+        let recordedMelody = [];
+        let recordingStartTime = 0;
+        let isPlayingRecorded = false;
+        let recordedPlayTimeouts = [];
+
+        function setChordModeActive() {
+            const chordRadio = document.querySelector('input[name="playMode"][value="chord"]');
+            if (chordRadio) { chordRadio.checked = true; chordRadio.dispatchEvent(new Event('change')); }
+        }
+
+        function setSingleModeActive() {
+            const singleRadio = document.querySelector('input[name="playMode"][value="single"]');
+            if (singleRadio) { singleRadio.checked = true; singleRadio.dispatchEvent(new Event('change')); }
+        }
+
+        function playRecordedMelody() {
+            if (recordedMelody.length === 0) { statusDisplay.innerHTML = '⚠️ Belum ada melodi yang direkam.'; return; }
+            if (isPlayingRecorded) { stopRecordedPlayback(); return; }
+            stopAllSounds(); setChordModeActive(); buildChordKeyboard();
+            isPlayingRecorded = true;
+            recordedMelody.forEach((item, i) => {
+                const delayMs = item.time * 1000;
+                const timeoutId = setTimeout(() => {
+                    if (!isPlayingRecorded) return;
+                    playSingleNote(item.freq, item.duration, currentInstrument, 'melody');
+                    const key = keyElements[item.note];
+                    if (key) { key.classList.add('active'); setTimeout(() => key.classList.remove('active'), item.duration * 1000); }
+                    statusDisplay.innerHTML = `🎵 ${item.note} (${item.freq.toFixed(2)} Hz) [${currentInstrument}] (melodi rekaman)`;
+                }, delayMs);
+                recordedPlayTimeouts.push(timeoutId);
+            });
+            const totalTime = recordedMelody[recordedMelody.length - 1].time + 0.2;
+            const finalTimeout = setTimeout(() => {
+                isPlayingRecorded = false; restoreKeyboardAfterPlayback(); setSingleModeActive();
+                statusDisplay.innerHTML = '✅ Melodi selesai diputar';
+            }, totalTime * 1000 + 200);
+            recordedPlayTimeouts.push(finalTimeout);
+        }
+
+        function stopRecordedPlayback() {
+            recordedPlayTimeouts.forEach(id => clearTimeout(id));
+            recordedPlayTimeouts = [];
+            isPlayingRecorded = false; stopAllSounds(); restoreKeyboardAfterPlayback(); setSingleModeActive();
+            statusDisplay.innerHTML = '⏹ Pemutaran melodi dihentikan';
+        }
+
+        function restoreKeyboardAfterPlayback() {
+            const val = parseInt(octaveSelector.value); buildKeyboard(val);
+        }
+
+        // ================================================================
+        // KEYBOARD
+        // ================================================================
+        const container = document.getElementById('keyboardContainer');
+        const statusDisplay = document.getElementById('statusDisplay');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const singleModeLabel = document.getElementById('singleModeLabel');
+        const chordModeLabel = document.getElementById('chordModeLabel');
+        const octaveSelector = document.getElementById('octaveSelector');
+        const instrumentSelector = document.getElementById('instrumentSelector');
+        const reverbSlider = document.getElementById('reverbMix');
+        const delaySlider = document.getElementById('delayMix');
+        const reverbVal = document.getElementById('reverbVal');
+        const delayVal = document.getElementById('delayVal');
+        const ampSlider = document.getElementById('ampSlider');
+        const ampVal = document.getElementById('ampVal');
+        const descInput = document.getElementById('descInput');
+        const descMoodSelect = document.getElementById('descMoodSelect');
+        const descScaleSelect = document.getElementById('descScaleSelect');
+        const descInputMode = document.getElementById('descInputMode');
+        const descGenerateBtn = document.getElementById('descGenerateBtn');
+        const descStopBtn = document.getElementById('descStopBtn');
+        const melodyResultArea = document.getElementById('melodyResultArea');
+        const melodyResultDisplay = document.getElementById('melodyResultDisplay');
+        let keyElements = {};
+        let keyboardMelodyPlaying = false;
+        let keyboardMelodyTimeout = null;
+
+        function handleKeyPress(note) {
+            const key = keyElements[note];
+            if (!key) return;
+            key.classList.add('active');
+            setTimeout(() => key.classList.remove('active'), 400);
+            const match = note.match(/^([A-Z#]+)(\d+)$/);
+            if (!match) return;
+            const noteName = match[1];
+            const octave = parseInt(match[2]);
+            if (playMode === 'single') {
+                stopAllSounds();
+                if (isPlayingRecorded) stopRecordedPlayback();
+                const freq = FREQ_MAP[note];
+                if (freq) {
+                    const duration = 0.6;
+                    playSingleNote(freq, duration, currentInstrument, 'melody');
+                    const now = performance.now();
+                    if (recordedMelody.length === 0) recordingStartTime = now;
+                    const elapsed = (now - recordingStartTime) / 1000;
+                    recordedMelody.push({ note: note, freq: freq, duration: duration, time: elapsed });
+                    statusDisplay.innerHTML = `🎵 Memainkan <span>${note}</span> (${freq.toFixed(2)} Hz) [${currentInstrument}] (melodi direkam)`;
+                }
+                return;
+            }
+            let isValidChordRoot = false;
+            let chordType = 'mayor';
+            if (octave === 2) { isValidChordRoot = true; chordType = noteName.includes('#') ? 'minor' : 'mayor'; }
+            else if (octave === 3) {
+                const idx = NOTES_20.indexOf(noteName);
+                if (idx >= 0 && idx < 17) { isValidChordRoot = true; chordType = noteName.includes('#') ? 'minor' : 'mayor'; }
+            }
+            if (isValidChordRoot) {
+                stopChords();
+                const idx = NOTES_20.indexOf(noteName);
+                if (idx === -1) return;
+                const chordNotes = buildChord20(idx, chordType);
+                const freqs = chordNotes.map(n => { const fullNote = n + octave; return FREQ_MAP[fullNote] || 0; }).filter(f => f > 0);
+                if (freqs.length > 0) {
+                    const LONG_DURATION = 999;
+                    freqs.forEach(f => playSingleNote(f, LONG_DURATION, 'piano', 'chord'));
+                    const typeSymbol = chordType === 'mayor' ? '' : 'm';
+                    statusDisplay.innerHTML = `🎵 Akord <span>${note}</span> ${chordType}: ${chordNotes.join(' + ')} [🎹 Piano] (sustain) — melodi tetap berjalan`;
+                } else { statusDisplay.innerHTML = `⚠️ Akord untuk ${note} tidak valid.`; }
+            } else {
+                const freq = FREQ_MAP[note];
+                if (freq) {
+                    const duration = 0.6;
+                    playSingleNote(freq, duration, currentInstrument, 'melody');
+                    statusDisplay.innerHTML = `🎵 Nada <span>${note}</span> (${freq.toFixed(2)} Hz) [${currentInstrument}] (melodi)`;
+                }
+            }
+        }
+
+        document.getElementById('playMayorBtn').addEventListener('click', function() { playRecordedMelody(); });
+        document.getElementById('playMinorBtn').addEventListener('click', function() { playRecordedMelody(); });
+        document.querySelectorAll('input[name="playMode"]').forEach(r => {
+            r.addEventListener('change', function() {
+                if (this.checked) {
+                    playMode = this.value;
+                    document.querySelectorAll('.controls label').forEach(l => l.classList.remove('active-mode'));
+                    if (playMode === 'single') {
+                        singleModeLabel.classList.add('active-mode');
+                        modeIndicator.textContent = '🎵 Mode: Tunggal';
+                    } else {
+                        chordModeLabel.classList.add('active-mode');
+                        modeIndicator.textContent = '🎵 Mode: Akord (C2-B#3)';
+                    }
+                    stopAllSounds();
+                    if (isPlayingRecorded) stopRecordedPlayback();
+                    statusDisplay.innerHTML = `🔄 Mode berubah ke: ${playMode === 'single' ? 'Tunggal' : 'Akord (C2-B#3)'}`;
+                }
+            });
+        });
+        octaveSelector.addEventListener('change', function() {
+            const val = parseInt(this.value);
+            stopAllSounds();
+            if (isPlayingRecorded) stopRecordedPlayback();
+            if (!isPlayingRecorded) buildKeyboard(val);
+            statusDisplay.innerHTML = `🔄 Berubah ke ${val} oktaf`;
+        });
+        instrumentSelector.addEventListener('change', function() {
+            currentInstrument = this.value;
+            const names = { sine: 'Sine', square: 'Square', sawtooth: 'Sawtooth', triangle: 'Triangle', organ: 'Organ', piano: '🎹 Piano', flute: '🎵 Flute', trumpet: '🎺 Trumpet' };
+            statusDisplay.innerHTML = `🎹 Instrumen berubah ke: ${names[this.value] || this.value}`;
+        });
+        reverbSlider.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            reverbVal.textContent = val + '%';
+            updateReverbMix(val / 100);
+        });
+        delaySlider.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            delayVal.textContent = val + '%';
+            updateDelayMix(val / 100);
+        });
+        ampSlider.addEventListener('input', function() {
+            const val = parseInt(this.value) / 100;
+            ampVal.textContent = val.toFixed(1) + 'x';
+            if (masterGain && audioCtx) masterGain.gain.setValueAtTime(val, audioCtx.currentTime);
+        });
+        document.getElementById('stopBtn').addEventListener('click', function() {
+            stopAllSounds();
+            if (isPlayingRecorded) stopRecordedPlayback();
+            statusDisplay.innerHTML = '⏹ Semua suara dihentikan';
+        });
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            stopAllSounds();
+            if (isPlayingRecorded) stopRecordedPlayback();
+            recordedMelody = [];
+            recordingStartTime = 0;
+            statusDisplay.innerHTML = '↺ Siap memainkan nada (rekaman melodi dihapus)';
+            document.querySelectorAll('.key.active').forEach(k => k.classList.remove('active'));
+            melodyResultArea.style.display = 'none';
+            melodyResultDisplay.textContent = '-';
+            if (!isPlayingRecorded) { const val = parseInt(octaveSelector.value); buildKeyboard(val); }
+        });
+
+        // ================================================================
+        // DESKRIPSI → GENERATE & PLAY
+        // ================================================================
+        function generateSimulation(mood, scaleType, tempo) {
+            const scale = scaleType === 'mayor' ? ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'A', 'B', 'C', 'D', 'E'] : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'A'];
+            const baseNotes = scale.slice(0, 7);
+            const moodParams = {
+                'happy': { stepRange: 4, repeatChance: 0.3, noteLength: 0.3, direction: 1 },
+                'sad': { stepRange: 3, repeatChance: 0.5, noteLength: 0.6, direction: -1 },
+                'romantic': { stepRange: 3, repeatChance: 0.4, noteLength: 0.5, direction: 0 },
+                'mysterious': { stepRange: 5, repeatChance: 0.2, noteLength: 0.4, direction: 0 },
+                'energetic': { stepRange: 6, repeatChance: 0.1, noteLength: 0.2, direction: 1 },
+                'calm': { stepRange: 2, repeatChance: 0.6, noteLength: 0.7, direction: -1 }
+            };
+            const params = moodParams[mood] || moodParams['sad'];
+            const numNotes = Math.floor(Math.random() * 16) + 12;
+            const melody = [];
+            let currentIndex = Math.floor(Math.random() * 7);
+            let currentOctave = 4;
+            for (let i = 0; i < numNotes; i++) {
+                let step = 0;
+                if (Math.random() < params.repeatChance) { step = 0; }
+                else { step = Math.floor(Math.random() * params.stepRange) + 1; if (Math.random() < 0.5) step = -step; }
+                if (params.direction > 0 && Math.random() < 0.3) step = Math.abs(step);
+                if (params.direction < 0 && Math.random() < 0.3) step = -Math.abs(step);
+                let newIndex = currentIndex + step;
+                if (newIndex < 0) newIndex = 0;
+                if (newIndex >= baseNotes.length) newIndex = baseNotes.length - 1;
+                let octave = currentOctave;
+                if (newIndex - currentIndex > 3 && octave < 5) octave++;
+                if (newIndex - currentIndex < -3 && octave > 3) octave--;
+                const noteName = baseNotes[newIndex] + octave;
+                const freq = FREQ_MAP[noteName];
+                if (freq) { const duration = params.noteLength * (0.8 + Math.random() * 0.4); melody.push({ note: noteName, freq: freq, duration: duration }); }
+                currentIndex = newIndex; currentOctave = octave;
+            }
+            return melody;
+        }
+
+        function generateFromMelody(recorded, mood, scaleType, tempo) {
+            if (recorded.length === 0) return [];
+            const notes = recorded.map(item => { return { note: item.note, freq: item.freq, duration: 0.3 + Math.random() * 0.3 }; });
+            const scaleRoot = (scaleType === 'mayor') ? 'E' : 'A';
+            const rootIdx = NOTES_20.indexOf(scaleRoot);
+            const intervals = (scaleType === 'mayor') ? MAYOR_INTERVALS : MINOR_INTERVALS;
+            const scaleIndices = buildScale20(rootIdx, intervals);
+            const scaleNotes = scaleIndices.map(i => getNoteName20(i));
+            const transposeSteps = Math.floor(Math.random() * 7) - 3;
+            const newMelody = notes.map((item, index) => {
+                let currentIdx = scaleNotes.indexOf(item.note.replace(/[0-9]/g, ''));
+                if (currentIdx === -1) {
+                    let minDist = 20;
+                    let closest = 0;
+                    for (let i = 0; i < scaleNotes.length; i++) { const dist = Math.abs(i - currentIdx); if (dist < minDist) { minDist = dist; closest = i; } }
+                    currentIdx = closest;
+                }
+                let newIdx = (currentIdx + transposeSteps) % scaleNotes.length;
+                if (newIdx < 0) newIdx += scaleNotes.length;
+                const newNoteName = scaleNotes[newIdx];
+                const octaveMatch = item.note.match(/\d+$/);
+                let octave = octaveMatch ? parseInt(octaveMatch[0]) : 4;
+                if (newIdx - currentIdx > 3 && octave < 5) octave++;
+                if (newIdx - currentIdx < -3 && octave > 3) octave--;
+                const newNote = newNoteName + octave;
+                const freq = FREQ_MAP[newNote];
+                if (freq) { return { note: newNote, freq: freq, duration: item.duration * (0.8 + Math.random() * 0.4) }; }
+                return null;
+            }).filter(n => n !== null);
+            while (newMelody.length < 8) {
+                const idx = Math.floor(Math.random() * scaleNotes.length);
+                const noteName = scaleNotes[idx] + 4;
+                const freq = FREQ_MAP[noteName];
+                if (freq) { newMelody.push({ note: noteName, freq: freq, duration: 0.3 + Math.random() * 0.3 }); }
+            }
+            return newMelody;
+        }
+
+        descGenerateBtn.addEventListener('click', function() {
+            const mode = descInputMode.value;
+            const mood = descMoodSelect.value;
+            const scale = descScaleSelect.value;
+            const tempo = 120;
+            let melody = [];
+            if (mode === 'deskripsi') {
+                const text = descInput.value.trim();
+                if (!text) { alert('Silakan tulis deskripsi melodi terlebih dahulu.'); return; }
+                melody = generateSimulation(mood, scale, tempo);
+            } else {
+                if (recordedMelody.length === 0) { alert('Belum ada melodi yang direkam.'); return; }
+                melody = generateFromMelody(recordedMelody, mood, scale, tempo);
+            }
+            if (!melody || melody.length === 0) { alert('Gagal menghasilkan melodi. Coba lagi.'); return; }
+            const noteNames = melody.map(n => n.note).join(' → ');
+            melodyResultDisplay.textContent = noteNames;
+            melodyResultArea.style.display = 'block';
+            playMelody(melody, tempo);
+        });
+
+        function playMelody(melody, tempo = 120) {
+            if (!melody || melody.length === 0) return;
+            stopAllSounds();
+            if (isPlayingRecorded) stopRecordedPlayback();
+            keyboardMelodyPlaying = true;
+            descGenerateBtn.disabled = true;
+            descGenerateBtn.textContent = '⏳ Playing...';
+            const baseDuration = 60000 / tempo / 2;
+            let delay = 0;
+            melody.forEach((note, i) => {
+                const durMs = note.duration * baseDuration;
+                const durSec = durMs / 1000;
+                setTimeout(() => {
+                    if (!keyboardMelodyPlaying) return;
+                    playSingleNote(note.freq, durSec, currentInstrument, 'melody');
+                    const key = keyElements[note.note];
+                    if (key) { key.classList.add('active'); setTimeout(() => key.classList.remove('active'), durMs); }
+                    statusDisplay.innerHTML = `🎵 ${note.note} (${note.freq.toFixed(2)} Hz) [${currentInstrument}]`;
+                }, delay);
+                delay += durMs + 50;
+            });
+            keyboardMelodyTimeout = setTimeout(() => {
+                keyboardMelodyPlaying = false;
+                descGenerateBtn.disabled = false;
+                descGenerateBtn.textContent = '🎵 Generate & Play';
+                statusDisplay.innerHTML = '✅ Melodi selesai dimainkan';
+            }, delay + 200);
+        }
+
+        descStopBtn.addEventListener('click', function() {
+            stopAllSounds();
+            keyboardMelodyPlaying = false;
+            descGenerateBtn.disabled = false;
+            descGenerateBtn.textContent = '🎵 Generate & Play';
+            statusDisplay.innerHTML = '⏹ Pemutaran melodi dihentikan';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Escape') {
+                e.preventDefault();
+                stopAllSounds();
+                if (isPlayingRecorded) stopRecordedPlayback();
+                statusDisplay.innerHTML = '⏹ Dihentikan (keyboard)';
+            }
+        });
+
+        // ================================================================
+        // AI COMPOSER
+        // ================================================================
+        const aiDescArea = document.getElementById('aiDescArea');
+        const aiPromptArea = document.getElementById('aiPromptArea');
+        const aiDescModeLabel = document.getElementById('aiDescModeLabel');
+        const aiPromptModeLabel = document.getElementById('aiPromptModeLabel');
+        const aiModeBadge = document.getElementById('aiModeBadge');
+        const aiDescInput = document.getElementById('aiDescInput');
+        const aiApiKeyInput = document.getElementById('aiApiKeyInput');
+        const aiPromptInput = document.getElementById('aiPromptInput');
+        let aiInputMode = 'deskripsi';
+
+        document.querySelectorAll('input[name="aiInputMode"]').forEach(r => {
+            r.addEventListener('change', function() {
+                if (this.checked) {
+                    aiInputMode = this.value;
+                    if (aiInputMode === 'deskripsi') {
+                        aiDescArea.classList.add('show'); aiPromptArea.classList.remove('show');
+                        aiDescModeLabel.classList.add('active-ai-mode'); aiPromptModeLabel.classList.remove('active-ai-mode');
+                        aiModeBadge.textContent = 'Mode: Deskripsi'; aiModeBadge.className = 'ai-mode-badge desc';
+                    } else {
+                        aiDescArea.classList.remove('show'); aiPromptArea.classList.add('show');
+                        aiPromptModeLabel.classList.add('active-ai-mode'); aiDescModeLabel.classList.remove('active-ai-mode');
+                        aiModeBadge.textContent = 'Mode: Prompt AI'; aiModeBadge.className = 'ai-mode-badge prompt';
+                    }
+                }
+            });
+        });
+
+        const moodTags = document.querySelectorAll('#moodTags .mood-tag');
+        let selectedMood = 'sad';
+        moodTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                moodTags.forEach(t => t.classList.remove('active'));
+                this.classList.add('active'); selectedMood = this.dataset.mood;
+            });
+        });
+
+        async function generateWithAI(prompt, mood, scaleType, tempo, apiKey) {
+            try {
+                const systemPrompt = `Anda adalah komposer musik yang ahli dalam sistem 12-TET 20 nada per oktaf dengan A4=440 Hz. Skala Mayor: E - F - G - H - I - J - K - A - B - C - D - E. Skala Minor: A - B - C - D - E - F - G - H - I - J - K - A. Tugas: Buat melodi dalam format NOTASI NADA SAJA (contoh: E4 G4 H4 E5 G5 H5 E6). Hasilkan 8-20 nada. Hanya output notasi nada, tanpa penjelasan tambahan. Gunakan nada dari oktaf 3, 4, dan 5.`;
+                const userPrompt = `Mood: ${mood}\nSkala: ${scaleType}\nTempo: ${tempo} BPM\nDeskripsi: ${prompt || 'Ciptakan melodi yang indah'}\n\nHasilkan notasi nada:`;
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
+                        temperature: 0.8,
+                        max_tokens: 200
+                    })
+                });
+                if (!response.ok) { const error = await response.json(); throw new Error(error.error?.message || 'API Error'); }
+                const data = await response.json();
+                const result = data.choices[0].message.content.trim();
+                const notes = result.split(/\s+/).filter(n => n.length > 0);
+                const melody = [];
+                for (let n of notes) { n = n.replace(/[,;.]/g, ''); if (FREQ_MAP[n]) { melody.push({ note: n, freq: FREQ_MAP[n], duration: 0.3 + Math.random() * 0.3 }); } }
+                return melody.length > 0 ? melody : generateSimulation(mood, scaleType, tempo);
+            } catch (error) {
+                console.warn('AI API Error:', error);
+                document.getElementById('aiResultArea').innerHTML = `<div style="color:#e94560;">⚠️ Error API: ${error.message}. Beralih ke simulasi.</div>`;
+                return generateSimulation(mood, scaleType, tempo);
+            }
+        }
+
+        let generatedMelody = [];
+        let aiPlaying = false;
+        let aiPlayTimeout = null;
+
+        document.getElementById('aiGenerateBtn').addEventListener('click', async function() {
+            const scale = document.getElementById('aiScaleSelect').value;
+            const tempo = parseInt(document.getElementById('aiTempoSelect').value);
+            const inputText = aiInputMode === 'deskripsi' ? aiDescInput.value.trim() : aiPromptInput.value.trim();
+            if (!inputText) { alert('Masukkan deskripsi atau prompt terlebih dahulu!'); return; }
+            const resultArea = document.getElementById('aiResultArea');
+            const melodyDisplay = document.getElementById('aiMelodyDisplay');
+            const noteCount = document.getElementById('aiNoteCount');
+            const playBtn = document.getElementById('aiPlayBtn');
+            const stopBtn = document.getElementById('aiStopBtn');
+            resultArea.style.display = 'block';
+            melodyDisplay.textContent = '⏳ Generating...';
+            noteCount.textContent = 'Jumlah nada: 0';
+            playBtn.disabled = true; stopBtn.disabled = true;
+            this.disabled = true; this.textContent = '⏳ Generating...';
+            setTimeout(async () => {
+                let melody;
+                if (aiInputMode === 'prompt') {
+                    const apiKey = aiApiKeyInput.value.trim();
+                    if (!apiKey) { alert('Masukkan API Key OpenAI terlebih dahulu!'); this.disabled = false; this.textContent = '🚀 Generate'; return; }
+                    melody = await generateWithAI(inputText, selectedMood, scale, tempo, apiKey);
+                } else { melody = generateSimulation(selectedMood, scale, tempo); }
+                if (!melody || melody.length === 0) { melodyDisplay.textContent = '(Tidak ada nada yang dihasilkan)'; noteCount.textContent = 'Jumlah nada: 0'; this.disabled = false; this.textContent = '🚀 Generate'; return; }
+                generatedMelody = melody;
+                const noteNames = generatedMelody.map(n => n.note).join(' → ');
+                melodyDisplay.textContent = noteNames;
+                noteCount.textContent = `Jumlah nada: ${generatedMelody.length}`;
+                playBtn.disabled = false; stopBtn.disabled = false;
+                this.disabled = false; this.textContent = '🚀 Generate';
+            }, 300);
+        });
+
+        document.getElementById('aiPlayBtn').addEventListener('click', function() {
+            if (generatedMelody.length === 0) return;
+            if (aiPlaying) { stopAllSounds(); aiPlaying = false; if (aiPlayTimeout) { clearTimeout(aiPlayTimeout); aiPlayTimeout = null; } this.textContent = '▶ Play'; return; }
+            initAudio(); aiPlaying = true; this.textContent = '⏹ Stop';
+            const tempo = parseInt(document.getElementById('aiTempoSelect').value);
+            const baseDuration = 60000 / tempo / 2;
+            let delay = 0;
+            generatedMelody.forEach((note, i) => {
+                const dur = note.duration * baseDuration / 1000;
+                setTimeout(() => { if (!aiPlaying) return; playSingleNote(note.freq, dur, currentInstrument, 'melody'); }, delay * 1000);
+                delay += note.duration * baseDuration / 1000 + 0.05;
+            });
+            aiPlayTimeout = setTimeout(() => { aiPlaying = false; document.getElementById('aiPlayBtn').textContent = '▶ Play'; }, delay * 1000 + 200);
+        });
+
+        document.getElementById('aiStopBtn').addEventListener('click', function() {
+            stopAllSounds(); aiPlaying = false;
+            if (aiPlayTimeout) { clearTimeout(aiPlayTimeout); aiPlayTimeout = null; }
+            document.getElementById('aiPlayBtn').textContent = '▶ Play';
+        });
+
+        document.getElementById('aiClearBtn').addEventListener('click', function() {
+            stopAllSounds(); aiPlaying = false;
+            if (aiPlayTimeout) { clearTimeout(aiPlayTimeout); aiPlayTimeout = null; }
+            generatedMelody = [];
+            document.getElementById('aiResultArea').style.display = 'none';
+            document.getElementById('aiPlayBtn').disabled = true;
+            document.getElementById('aiStopBtn').disabled = true;
+            document.getElementById('aiPlayBtn').textContent = '▶ Play';
+        });
+
+        // ================================================================
+        // AI TRANSCRIBER
+        // ================================================================
+        let transcriberCtx = null;
+        let transcriberAnalyser = null;
+        let transcriberDataArray = null;
+        let transcriberSource = null;
+        let transcriberStream = null;
+        let isRecordingTranscriber = false;
+        let transcriberStartTime = 0;
+        let detectedNotes = [];
+        let lastDetectedNote = null;
+        let transcriberAnimationId = null;
+        let waveformData = [];
+        let isTranscriberPlaying = false;
+        let transcribePlayTimeouts = [];
+
+        const recordBtn = document.getElementById('recordBtn');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const statusEl = document.getElementById('status');
+        const transcribeBtn = document.getElementById('transcribeBtn');
+        const playResultBtn = document.getElementById('playResultBtn');
+        const sendToChordBtn = document.getElementById('sendToChordBtn');
+        const clearTranscribeBtn = document.getElementById('clearTranscribeBtn');
+        const transcribeResult = document.getElementById('transcribeResult');
+        const transcribedDisplay = document.getElementById('transcribedDisplay');
+        const transcribeInfo = document.getElementById('transcribeInfo');
+        const durationInfo = document.getElementById('durationInfo');
+        const algoInfo = document.getElementById('algoInfo');
+        const progressFill = document.getElementById('progressFill');
+        const progressBar = document.getElementById('progressBar');
+        const waveformCanvas = document.getElementById('waveformCanvas');
+        const wctx = waveformCanvas.getContext('2d');
+        let timerInterval = null;
+
+        function resizeWaveformCanvas() {
+            const rect = waveformCanvas.parentElement.getBoundingClientRect();
+            waveformCanvas.width = rect.width || 800;
+            waveformCanvas.height = 70;
+        }
+        resizeWaveformCanvas();
+        window.addEventListener('resize', resizeWaveformCanvas);
+
+        function autoCorrelate(buf, sampleRate, sensitivity) {
+            const threshold = parseFloat(sensitivity) || 0.012;
+            let maxSamples = Math.floor(buf.length / 2);
+            let bestOffset = -1;
+            let bestCorrelation = 0;
+            let foundGoodCorrelation = false;
+            let correlations = new Array(maxSamples);
+            for (let offset = 0; offset < maxSamples; offset++) {
+                let sum = 0;
+                for (let i = 0; i < maxSamples; i++) { sum += buf[i] * buf[i + offset]; }
+                correlations[offset] = sum;
+                let norm = 0;
+                for (let i = 0; i < maxSamples; i++) { norm += buf[i] * buf[i]; }
+                if (norm > 0) { correlations[offset] /= norm; }
+            }
+            for (let offset = 1; offset < maxSamples; offset++) {
+                if (correlations[offset] > bestCorrelation) { bestCorrelation = correlations[offset]; bestOffset = offset; }
+                if (correlations[offset] > threshold) { foundGoodCorrelation = true; }
+            }
+            if (!foundGoodCorrelation || bestOffset < 1) return -1;
+            const x0 = bestOffset - 1;
+            const x1 = bestOffset;
+            const x2 = bestOffset + 1;
+            if (x0 < 0 || x2 >= maxSamples) return sampleRate / bestOffset;
+            const y0 = correlations[x0];
+            const y1 = correlations[x1];
+            const y2 = correlations[x2];
+            const denom = y0 - 2 * y1 + y2;
+            let peakOffset = 0;
+            if (denom !== 0) { peakOffset = (y0 - y2) / (2 * denom); }
+            const finalOffset = x1 + peakOffset;
+            if (finalOffset < 1) return -1;
+            return sampleRate / finalOffset;
+        }
+
+        function yinPitch(buf, sampleRate, sensitivity) {
+            const threshold = parseFloat(sensitivity) || 0.012;
+            const maxSamples = Math.floor(buf.length / 2);
+            let cum = 0;
+            let tau = -1;
+            for (let t = 1; t < maxSamples; t++) {
+                let diff = 0;
+                for (let i = 0; i < maxSamples; i++) { diff += (buf[i] - buf[i + t]) * (buf[i] - buf[i + t]); }
+                cum += diff;
+                if (cum === 0) continue;
+                const d = diff / (cum / t);
+                if (d < threshold) { tau = t; break; }
+            }
+            if (tau === -1 || tau < 1) return -1;
+            return sampleRate / tau;
+        }
+
+        function detectPitchFromBuffer(timeData, sampleRate) {
+            const algo = document.querySelector('input[name="algorithm"]:checked')?.value || 'standard';
+            const sensitivity = document.getElementById('sensitivitySelect').value;
+            const buf = new Float32Array(timeData.length);
+            for (let i = 0; i < timeData.length; i++) { buf[i] = (timeData[i] - 128) / 128; }
+            let freq = -1;
+            if (algo === 'improved') { freq = yinPitch(buf, sampleRate, sensitivity); }
+            else { freq = autoCorrelate(buf, sampleRate, sensitivity); }
+            const mode = document.getElementById('modeSelect').value;
+            if (freq > 0) {
+                if (mode === 'vocal' && (freq < 200 || freq > 800)) return -1;
+                if (mode === 'instrument' && (freq < 80 || freq > 1200)) return -1;
+                if (mode === 'full' && (freq < 60 || freq > 1800)) return -1;
+            }
+            return freq;
+        }
+
+        function getFullNoteFromFreq(freq) {
+            if (freq <= 0) return null;
+            const n = 20 * Math.log(freq / 440) / Math.log(3);
+            const rounded = Math.round(n);
+            const targetFreq = 440 * Math.pow(3, rounded / 20);
+            const diff = Math.abs(targetFreq - freq);
+            if (diff / freq > 0.015) return null;
+            const mod = ((rounded % 20) + 20) % 20;
+            const note = NOTES_20[mod];
+            const octave = 4 + Math.floor(rounded / 20);
+            return note + octave;
+        }
+
+        function drawWaveform() {
+            const w = waveformCanvas.width;
+            const h = waveformCanvas.height;
+            wctx.clearRect(0, 0, w, h);
+            if (waveformData.length === 0) {
+                wctx.fillStyle = '#333'; wctx.font = '14px sans-serif'; wctx.textAlign = 'center';
+                wctx.fillText('Menunggu sinyal...', w / 2, h / 2 + 5);
+                return;
+            }
+            wctx.beginPath();
+            wctx.strokeStyle = '#e94560';
+            wctx.lineWidth = 2;
+            const step = Math.floor(waveformData.length / w);
+            for (let i = 0; i < w; i++) {
+                const val = (waveformData[i * step] - 128) / 128;
+                const y = h / 2 + val * (h / 2 - 5);
+                if (i === 0) wctx.moveTo(i, y);
+                else wctx.lineTo(i, y);
+            }
+            wctx.stroke();
+        }
+
+        function updateTranscriptionDisplay() {
+            if (detectedNotes.length === 0) {
+                transcribedDisplay.textContent = '(Belum ada nada terdeteksi)';
+                transcribeInfo.textContent = 'Jumlah nada: 0';
+                return;
+            }
+            const names = detectedNotes.map(n => n.note).join(' → ');
+            transcribedDisplay.textContent = names;
+            transcribeInfo.textContent = `Jumlah nada: ${detectedNotes.length}`;
+            transcribeResult.style.display = 'block';
+            sendToChordBtn.disabled = false;
+            playResultBtn.disabled = false;
+        }
+
+        function updateTimerDisplay() {
+            if (!isRecordingTranscriber) return;
+            const elapsed = (Date.now() - transcriberStartTime) / 1000;
+            const mins = Math.floor(elapsed / 60);
+            const secs = Math.floor(elapsed % 60);
+            timerDisplay.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} / 22:00`;
+            const progress = Math.min(elapsed / 1320, 1);
+            progressFill.style.width = (progress * 100) + '%';
+            if (elapsed > 1320) { stopTranscriberRecording(); statusEl.textContent = '⏹ Maksimum 22 menit tercapai. Rekaman berhenti.'; }
+        }
+
+        function processTranscriberAudio() {
+            if (!transcriberAnalyser || !isRecordingTranscriber) return;
+            transcriberAnalyser.getByteTimeDomainData(transcriberDataArray);
+            const sampleRate = transcriberCtx.sampleRate;
+            waveformData = Array.from(transcriberDataArray);
+            drawWaveform();
+            const freq = detectPitchFromBuffer(transcriberDataArray, sampleRate);
+            if (freq > 0) {
+                const note = getFullNoteFromFreq(freq);
+                if (note) {
+                    const now = Date.now();
+                    if (lastDetectedNote !== note) {
+                        const elapsed = (now - transcriberStartTime) / 1000;
+                        detectedNotes.push({ note: note, freq: freq, time: elapsed });
+                        lastDetectedNote = note;
+                        updateTranscriptionDisplay();
+                        statusEl.innerHTML = `🎵 Terdeteksi: <span>${note}</span> (${freq.toFixed(2)} Hz)`;
+                    }
+                }
+            }
+            transcriberAnimationId = requestAnimationFrame(processTranscriberAudio);
+        }
+
+        async function startTranscriberRecording() {
+            if (isRecordingTranscriber) return;
+            try {
+                transcriberStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                transcriberCtx = new(window.AudioContext || window.webkitAudioContext)();
+                transcriberAnalyser = transcriberCtx.createAnalyser();
+                transcriberAnalyser.fftSize = 2048;
+                transcriberAnalyser.smoothingTimeConstant = 0.8;
+                transcriberSource = transcriberCtx.createMediaStreamSource(transcriberStream);
+                transcriberSource.connect(transcriberAnalyser);
+                transcriberDataArray = new Uint8Array(transcriberAnalyser.fftSize);
+                isRecordingTranscriber = true;
+                transcriberStartTime = Date.now();
+                detectedNotes = [];
+                lastDetectedNote = null;
+                waveformData = [];
+                recordBtn.classList.add('recording');
+                recordBtn.textContent = '⏹';
+                document.getElementById('recordArea').classList.add('recording');
+                transcribeBtn.disabled = true;
+                transcribeBtn.textContent = '⏳ Merekam...';
+                progressBar.classList.add('show');
+                statusEl.textContent = '🔴 Merekam... Deteksi pitch aktif.';
+                timerInterval = setInterval(updateTimerDisplay, 500);
+                processTranscriberAudio();
+            } catch (err) {
+                statusEl.textContent = '❌ Error: ' + err.message;
+                console.error(err);
+            }
+        }
+
+        function stopTranscriberRecording() {
+            if (!isRecordingTranscriber) return;
+            isRecordingTranscriber = false;
+            if (transcriberAnimationId) { cancelAnimationFrame(transcriberAnimationId); transcriberAnimationId = null; }
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            if (transcriberSource) { try { transcriberSource.disconnect(); } catch (e) {} transcriberSource = null; }
+            if (transcriberStream) { transcriberStream.getTracks().forEach(track => track.stop()); transcriberStream = null; }
+            if (transcriberCtx && transcriberCtx.state !== 'closed') { try { transcriberCtx.close(); } catch (e) {} transcriberCtx = null; transcriberAnalyser = null; transcriberDataArray = null; }
+            recordBtn.classList.remove('recording');
+            recordBtn.textContent = '🎤';
+            document.getElementById('recordArea').classList.remove('recording');
+            progressBar.classList.remove('show');
+            transcribeBtn.disabled = false;
+            transcribeBtn.textContent = '🧠 AI Transcribe';
+            const duration = detectedNotes.length > 0 ? detectedNotes[detectedNotes.length - 1].time.toFixed(1) : '0';
+            durationInfo.textContent = duration + ' detik';
+            algoInfo.textContent = document.querySelector('input[name="algorithm"]:checked')?.value === 'improved' ? 'YIN' : 'Autokorelasi';
+            statusEl.innerHTML = '⏹ Rekaman berhenti. ' + (detectedNotes.length > 0 ? `<span>${detectedNotes.length}</span> nada terdeteksi.` : 'Tidak ada nada terdeteksi.');
+            updateTranscriptionDisplay();
+            playResultBtn.disabled = (detectedNotes.length === 0);
+            sendToChordBtn.disabled = (detectedNotes.length === 0);
+        }
+
+        recordBtn.addEventListener('click', function() {
+            if (isRecordingTranscriber) { stopTranscriberRecording(); }
+            else { startTranscriberRecording(); }
+        });
+
+        transcribeBtn.addEventListener('click', function() {
+            if (detectedNotes.length === 0) { statusEl.textContent = '⚠️ Belum ada nada yang terdeteksi. Coba rekam suara/instrumen.'; return; }
+            statusEl.innerHTML = `✅ Transkripsi selesai: ${detectedNotes.length} nada terdeteksi.`;
+            updateTranscriptionDisplay();
+        });
+
+        playResultBtn.addEventListener('click', async function() {
+            if (isTranscriberPlaying) {
+                transcribePlayTimeouts.forEach(t => clearTimeout(t));
+                transcribePlayTimeouts = [];
+                isTranscriberPlaying = false;
+                playResultBtn.textContent = '▶ Play Hasil';
+                statusEl.textContent = '⏹ Pemutaran dihentikan.';
+                return;
+            }
+            if (detectedNotes.length === 0) { statusEl.textContent = '⚠️ Tidak ada nada yang terdeteksi. Rekam suara terlebih dahulu!'; return; }
+            try {
+                const ctx = audioCtx || new(window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') { await ctx.resume(); }
+                const validNotes = detectedNotes.filter(n => n.freq > 20 && n.freq < 20000);
+                if (validNotes.length === 0) { statusEl.textContent = '⚠️ Tidak ada nada valid untuk diputar.'; return; }
+                let outputGain = masterGain;
+                if (!outputGain) { outputGain = ctx.createGain(); outputGain.gain.setValueAtTime(1.0, ctx.currentTime); outputGain.connect(ctx.destination); }
+                const convolver = ctx.createConvolver();
+                const impulseLength = 1.2;
+                const sampleRate = ctx.sampleRate;
+                const impulse = ctx.createBuffer(2, Math.floor(impulseLength * sampleRate), sampleRate);
+                for (let ch = 0; ch < 2; ch++) {
+                    const data = impulse.getChannelData(ch);
+                    for (let i = 0; i < data.length; i++) { data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (sampleRate * 0.25)); }
+                }
+                convolver.buffer = impulse;
+                const dryGain = ctx.createGain();
+                dryGain.gain.setValueAtTime(0.5, ctx.currentTime);
+                const wetGain = ctx.createGain();
+                wetGain.gain.setValueAtTime(0.5, ctx.currentTime);
+                const TEMPO_BPM = 160;
+                const INTERVAL = 60 / TEMPO_BPM;
+                const DURATION = INTERVAL * 0.6;
+                let startTime = ctx.currentTime + 0.1;
+                const totalNotes = validNotes.length;
+                validNotes.forEach((item, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    if (index % 3 === 0) { osc.type = 'sine'; }
+                    else if (index % 3 === 1) { osc.type = 'triangle'; }
+                    else { osc.type = 'sawtooth'; }
+                    const vibratoOsc = ctx.createOscillator();
+                    const vibratoGain = ctx.createGain();
+                    vibratoOsc.frequency.setValueAtTime(7 + Math.random() * 3, ctx.currentTime);
+                    vibratoGain.gain.setValueAtTime(5, ctx.currentTime);
+                    vibratoOsc.connect(vibratoGain);
+                    vibratoGain.connect(osc.frequency);
+                    vibratoOsc.start(ctx.currentTime);
+                    osc.frequency.setValueAtTime(item.freq, ctx.currentTime);
+                    const now = startTime + (index * INTERVAL);
+                    const notePosition = index / totalNotes;
+                    let volumeShape = Math.sin(notePosition * 3 * Math.PI) * 0.3 + 0.7;
+                    volumeShape = Math.max(0.5, Math.min(1.0, volumeShape));
+                    const randomFactor = 0.9 + Math.random() * 0.2;
+                    const targetVolume = volumeShape * randomFactor * 1.0;
+                    const attack = 0.01;
+                    const decay = 0.02;
+                    const sustain = targetVolume;
+                    const release = 0.02;
+                    const duration = DURATION * (0.7 + Math.random() * 0.3);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(targetVolume * 1.5, now + attack);
+                    gain.gain.exponentialRampToValueAtTime(sustain, now + attack + decay);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + duration - release);
+                    osc.connect(gain);
+                    gain.connect(dryGain);
+                    gain.connect(wetGain);
+                    dryGain.connect(outputGain);
+                    wetGain.connect(convolver);
+                    convolver.connect(outputGain);
+                    osc.start(now);
+                    osc.stop(now + duration);
+                    setTimeout(() => { try { vibratoOsc.stop(); } catch(e) {} }, duration * 1000 + 50);
+                });
+                isTranscriberPlaying = true;
+                playResultBtn.textContent = '⏹ Stop';
+                const totalTime = totalNotes * INTERVAL + 0.3;
+                statusEl.innerHTML = `🔊 Memutar ${totalNotes} nada (Amplifier aktif!)...`;
+                const timeout = setTimeout(() => { isTranscriberPlaying = false; playResultBtn.textContent = '▶ Play Hasil'; statusEl.innerHTML = '✅ Pemutaran selesai.'; }, totalTime * 1000 + 400);
+                transcribePlayTimeouts.push(timeout);
+            } catch (error) {
+                console.error('❌ Error saat play:', error);
+                statusEl.textContent = '❌ Gagal memutar: ' + error.message;
+                playResultBtn.textContent = '▶ Play Hasil';
+                isTranscriberPlaying = false;
+            }
+        });
+
+        sendToChordBtn.addEventListener('click', function() {
+            if (detectedNotes.length === 0) return;
+            const noteNames = detectedNotes.map(n => n.note).join(' → ');
+            const chordInput = document.getElementById('chordInput');
+            if (chordInput) {
+                chordInput.value = noteNames;
+                document.querySelector('.tab-btn-nav[data-tab="chord"]')?.click();
+                statusEl.innerHTML = '✅ Data dikirim ke Chord Progression! Klik "Generate Progresi" untuk melihat hasil.';
+            }
+        });
+
+        clearTranscribeBtn.addEventListener('click', function() {
+            if (isTranscriberPlaying) { transcribePlayTimeouts.forEach(t => clearTimeout(t)); transcribePlayTimeouts = []; isTranscriberPlaying = false; playResultBtn.textContent = '▶ Play Hasil'; }
+            detectedNotes = [];
+            lastDetectedNote = null;
+            transcribedDisplay.textContent = '-';
+            transcribeInfo.textContent = 'Jumlah nada: 0';
+            durationInfo.textContent = '0 detik';
+            transcribeResult.style.display = 'none';
+            sendToChordBtn.disabled = true;
+            playResultBtn.disabled = true;
+            statusEl.textContent = '🗑️ Hasil transkripsi dibersihkan.';
+            waveformData = [];
+            drawWaveform();
+            if (isRecordingTranscriber) stopTranscriberRecording();
+        });
+
+        // ================================================================
+        // CHORD PROGRESSION
+        // ================================================================
+        document.getElementById('chordGenerateBtn').addEventListener('click', function() {
+            const input = document.getElementById('chordInput').value.trim();
+            if (!input) { alert('Masukkan hasil transkripsi nada terlebih dahulu!'); return; }
+            const rawNotes = input.split(/[\s→,]+/).filter(n => n.length > 0);
+            const noteNames = rawNotes.map(n => n.replace(/[0-9]/g, ''));
+            if (noteNames.length < 3) { alert('Minimal 3 nada!'); return; }
+            const freqCount = {};
+            noteNames.forEach(n => { if (NOTES_20.includes(n)) { freqCount[n] = (freqCount[n] || 0) + 1; } });
+            if (Object.keys(freqCount).length === 0) { alert('Tidak ada not yang dikenali dalam sistem 20 nada.'); return; }
+            let maxCount = 0;
+            let rootName = 'E';
+            for (let [n, c] of Object.entries(freqCount)) { if (c > maxCount) { maxCount = c; rootName = n; } }
+            const rootIdx = NOTES_20.indexOf(rootName);
+            if (rootIdx === -1) { alert(`Root "${rootName}" tidak dikenali.`); return; }
+            const modeAnalisis = document.getElementById('chordModeSelect').value;
+            let scaleType = 'Mayor';
+            let scaleNames = [];
+            if (modeAnalisis === 'mayor') { scaleType = 'Mayor'; const scaleIdx = buildScale20(rootIdx, MAYOR_INTERVALS); scaleNames = scaleIdx.map(i => getNoteName20(i)); }
+            else if (modeAnalisis === 'minor') { scaleType = 'Minor'; const scaleIdx = buildScale20(rootIdx, MINOR_INTERVALS); scaleNames = scaleIdx.map(i => getNoteName20(i)); }
+            else {
+                const mayorScaleIdx = buildScale20(rootIdx, MAYOR_INTERVALS);
+                const minorScaleIdx = buildScale20(rootIdx, MINOR_INTERVALS);
+                const mayorScaleNames = mayorScaleIdx.map(i => getNoteName20(i));
+                const minorScaleNames = minorScaleIdx.map(i => getNoteName20(i));
+                const matchMayor = noteNames.filter(n => mayorScaleNames.includes(n)).length;
+                const matchMinor = noteNames.filter(n => minorScaleNames.includes(n)).length;
+                if (matchMinor > matchMayor) { scaleType = 'Minor'; scaleNames = minorScaleNames; }
+                else { scaleType = 'Mayor'; scaleNames = mayorScaleNames; }
+            }
+            const chordRoots = scaleNames.slice(0, 7);
+            const chordTypes = [];
+            for (let i = 0; i < chordRoots.length; i++) {
+                const rootIdx2 = NOTES_20.indexOf(chordRoots[i]);
+                const thirdIdx = (rootIdx2 + 4) % 20;
+                const thirdName = getNoteName20(thirdIdx);
+                const isMajor = scaleNames.includes(thirdName);
+                const fifthIdx = (rootIdx2 + 7) % 20;
+                const fifthName = getNoteName20(fifthIdx);
+                const isDiminished = !scaleNames.includes(fifthName);
+                if (isDiminished) { chordTypes.push('diminished'); }
+                else { chordTypes.push(isMajor ? 'mayor' : 'minor'); }
+            }
+            const romanMap = { 'mayor': ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'], 'minor': ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'] };
+            const roman = scaleType === 'Mayor' ? romanMap['mayor'] : romanMap['minor'];
+            const countVal = parseInt(document.getElementById('chordCountSelect').value);
+            const showCount = Math.min(countVal, chordRoots.length);
+            const grid = document.getElementById('chordGrid');
+            grid.innerHTML = '';
+            const resultDiv = document.getElementById('chordResult');
+            resultDiv.style.display = 'block';
+            document.getElementById('chordKey').textContent = rootName;
+            document.getElementById('chordScale').textContent = scaleType;
+            for (let i = 0; i < showCount; i++) {
+                const root = chordRoots[i];
+                const type = chordTypes[i];
+                const typeSymbol = type === 'mayor' ? '' : (type === 'minor' ? 'm' : '°');
+                const rootIdx2 = NOTES_20.indexOf(root);
+                const chordNotes = buildChord20(rootIdx2, type);
+                const card = document.createElement('div');
+                card.style.cssText = 'background:#1a1a2e;border-radius:10px;padding:12px;border:1px solid #2a3a5e;text-align:center;';
+                card.innerHTML = `<div style="font-size:1.2rem;font-weight:700;color:#ffd700;">${root}${typeSymbol}</div><div style="font-size:0.75rem;color:#aaa;margin-top:3px;">${chordNotes.join(' + ')}</div><div style="font-size:0.65rem;color:#888;margin-top:2px;">${roman[i]}</div>`;
+                grid.appendChild(card);
+            }
+        });
+
+        document.getElementById('chordClearBtn').addEventListener('click', function() {
+            document.getElementById('chordInput').value = '';
+            document.getElementById('chordResult').style.display = 'none';
+            document.getElementById('chordGrid').innerHTML = '';
+        });
+
+        // ================================================================
+        // INFO TAB
+        // ================================================================
+        const tabContent = document.getElementById('tabContent');
+        const tabData = {
+            teori: `<h3>🎼 Dasar Teoritis</h3><p><b>Rumus:</b> fₙ = 440 × 3^(n/20), A4 = 440 Hz (acuan)</p><p><b>Oktaf:</b> f_oktaf_berikutnya = f_oktaf_sebelumnya × 3</p><h3>🎵 Penemuan Nada Dasar Baru</h3><p>Nada tambahan ditemukan di antara G#4 (415.30 Hz) dan A4 (440 Hz) pada sistem 8-TET. Nada ini berfrekuensi <b>416.49 Hz</b> dan menjadi nada dasar natural minor yang baru pada sistem 12-TET (20 nada per oktaf).</p><h3>🎵 Skala Mayor (E=1)</h3><p>E - F - G - H - I - J - K - A - B - C - D - E</p><p>Interval: 1 1 1 1 ½ 1 1 1 1 1 ½</p><h3>🎵 Skala Minor (A=1)</h3><p>A - B - C - D - E - F - G - H - I - J - K - A</p><p>Interval: 1 1 1 ½ 1 1 1 1 ½ 1 1</p>`,
+            freq: `<h3>📊 Frekuensi (Oktaf 4)</h3><table class="freq-table"><thead><tr><th>Nada</th><th>Hz</th><th>Tuts</th></tr></thead><tbody><tr><td class="note-name">E4</td><td>215.44</td><td>⬜</td></tr><tr><td class="note-name black-note">E#4</td><td>227.60</td><td>⬛</td></tr><tr><td class="note-name">F4</td><td>240.46</td><td>⬜</td></tr><tr><td class="note-name black-note">F#4</td><td>254.03</td><td>⬛</td></tr><tr><td class="note-name">G4</td><td>268.38</td><td>⬜</td></tr><tr><td class="note-name black-note">G#4</td><td>283.53</td><td>⬛</td></tr><tr><td class="note-name">H4</td><td>299.54</td><td>⬜</td></tr><tr><td class="note-name black-note">H#4</td><td>316.46</td><td>⬛</td></tr><tr><td class="note-name">I4</td><td>334.33</td><td>⬜</td></tr><tr><td class="note-name">J4</td><td>353.21</td><td>⬜</td></tr><tr><td class="note-name black-note">J#4</td><td>373.15</td><td>⬛</td></tr><tr><td class="note-name">K4</td><td>394.22</td><td>⬜</td></tr><tr><td class="note-name black-note">K#4</td><td>416.48</td><td>⬛</td></tr><tr><td class="note-name" style="color:#f5a623;font-weight:bold;">A4</td><td style="color:#f5a623;font-weight:bold;">440.00</td><td>⬜</td></tr><tr><td class="note-name black-note">A#4</td><td>464.85</td><td>⬛</td></tr><tr><td class="note-name">B4</td><td>491.09</td><td>⬜</td></tr><tr><td class="note-name black-note">B#4</td><td>518.83</td><td>⬛</td></tr><tr><td class="note-name">C4</td><td>548.12</td><td>⬜</td></tr><tr><td class="note-name black-note">C#4</td><td>579.07</td><td>⬛</td></tr><tr><td class="note-name">D4</td><td>611.77</td><td>⬜</td></tr></tbody></table><p style="font-size:0.8rem;color:#888;font-weight:bold;">A4 = 440 Hz (acuan) | Oktaf berikutnya × 3</p>`,
+            skala: `<h3>🎹 Skala Mayor (E=1)</h3><p>E - F - G - H - I - J - K - A - B - C - D - E</p><p>Interval: 1 1 1 1 ½ 1 1 1 1 1 ½</p><h3>🎹 Skala Minor (A=1)</h3><p>A - B - C - D - E - F - G - H - I - J - K - A</p><p>Interval: 1 1 1 ½ 1 1 1 1 ½ 1 1</p>`,
+            chord: `<h3>🎵 Akord</h3><p>Akord dibangun dari 20 not dengan terts (mayor=4, minor=3) dan kwint (7).</p><p>Rentang akord: C2 – B#3 (20 nada). Tuts putih = Mayor, tuts hitam = Minor.</p><p>Contoh: E mayor = E, G#, K#; E# minor = E#, G##? (gunakan 20-TET)</p>`,
+            simulasi: `<h3>🎵 Simulasi Lagu KJ 33 (Sistem 12-TET 20 Nada)</h3><p>Kunjungi artikel blog untuk melihat simulasi lengkap lagu <b>"SuaraMu Kudengar" (KJ 33)</b> yang telah dikonversi ke sistem 12-TET 20 nada per oktaf.</p><ul><li>Notasi angka lagu dalam sistem 8-TET dan 12-TET</li><li>Penjelasan konversi nada</li><li>Kode Python untuk memainkan lagu dengan instrumen piano (ADSR)</li><li>Perbandingan frekuensi dan ekspresi musik</li></ul><p style="margin-top:15px;"><a href="https://musikbarupmd.blogspot.com/2024/11/simulasi-contoh-lagu-memakai-audio.html?m=1" target="_blank" style="display:inline-block; padding:10px 20px; background:#e94560; color:#fff; border-radius:25px; text-decoration:none; font-weight:600;">🎵 Buka Simulasi Lagu</a></p>`,
+            tentang: `<h3>📖 Tentang Aplikasi</h3><p>Berdasarkan karya tulis Sukma Riadi Pakpahan, SST.</p><p><b>Fitur:</b> 8 instrumen, Reverb, Delay, Amplifier, 3/4/5 oktaf, Akord (C2-B#3) sustain dengan piano, AI Composer, AI Transcriber (dengan mikrofon), Chord Progression.</p><p><b>Tombol Mayor/Minor:</b> Memutar ulang melodi rekaman dengan durasi dan tempo yang sama persis.</p><p><b>Gubah dari Melodi:</b> Di tab Keyboard, pilih mode Input "Melodi", tulis deskripsi, lalu Generate & Play untuk menggubah melodi rekaman.</p><p><b>Akord saat melodi mengalun:</b> Beralih ke mode Akord saat melodi diputar, tekan tuts akord – akord baru menggantikan yang lama, melodi tetap berjalan.</p><p><b>Keyboard otomatis fokus ke C2-B#3 saat melodi diputar</b> untuk memudahkan akses akord (tidak termasuk C3 dan D3).</p><p><b>Tombol Mayor/Minor otomatis mengaktifkan mode Akord</b>, dan setelah selesai kembali ke Nada Tunggal.</p><p><b>Sistem:</b> 12-TET 20 Nada per Oktaf | A4 = 440 Hz</p>`,
+            portfolio: `<h3>💼 Portfolio — SR Pakpahan, SST</h3><p>Jelajahi portofolio lengkap pengembang aplikasi <b>PMD Musik 12 TET</b>.</p><p style="margin-top:10px; color:#aaa; font-size:0.9rem;"><b>SR Pakpahan, SST</b> adalah seorang profesional di bidang teknologi informasi dengan latar belakang kuat sebagai lulusan Sekolah Tinggi Ilmu Statistik (STIS) Jakarta, jurusan Statistika Ekonomi. Berbekal pengalaman lebih dari <b>19 tahun</b> sebagai PNS di Badan Pusat Statistik (BPS), beliau mengembangkan ketelitian analitis yang kuat dalam pengolahan data dan manajemen proyek.</p><p style="color:#aaa; font-size:0.9rem;">Kini berfokus pada pengembangan aplikasi web dan desktop modern menggunakan React, serta pemanfaatan Data Science. Dengan perpaduan kemampuan statistik, analisis data, dan rekayasa perangkat lunak, selalu berusaha memberikan solusi terbaik yang efisien, akurat, dan dapat diandalkan.</p><div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:15px 0; text-align:center;"><div style="background:#1a1a2e; padding:15px; border-radius:12px; border:1px solid #2a3a5e;"><div style="font-size:1.8rem; font-weight:700; color:#f5a623;">19+</div><div style="color:#888; font-size:0.8rem;">Tahun Pengalaman</div></div><div style="background:#1a1a2e; padding:15px; border-radius:12px; border:1px solid #2a3a5e;"><div style="font-size:1.8rem; font-weight:700; color:#f5a623;">10+</div><div style="color:#888; font-size:0.8rem;">Proyek & Riset</div></div></div><p style="margin-top:15px; text-align:center;"><a href="https://srpakpahansst.github.io/Portfolio/" target="_blank" style="display:inline-block; padding:12px 30px; background:#e94560; color:#fff; border-radius:25px; text-decoration:none; font-weight:600;">🌐 Buka Portfolio Lengkap</a></p>`
+        };
+
+        function renderTab(tabId) {
+            tabContent.innerHTML = tabData[tabId] || '<p>Kosong</p>';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+        }
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => renderTab(btn.dataset.tab));
+        });
+
+        // ================================================================
+        // TUTORIAL
+        // ================================================================
+        const tutorialData = [
+            { title: "🎵 Selamat Datang di PMD Musik 12 TET!", content: `<p>Aplikasi ini adalah eksplorasi musik sistem <b>12-TET dengan 20 nada per oktaf</b>, berdasarkan karya tulis Sukma Riadi Pakpahan, SST.</p><p>Tutorial ini akan memandu Anda melalui semua fitur yang tersedia.</p><p><b>Mulai dengan mengklik tombol "Mulai" di layar pembuka.</b></p>` },
+            { title: "🎹 Keyboard — Mode Nada Tunggal", content: `<p>Di tab <b>Keyboard</b>, Anda dapat memainkan nada dengan mengklik tuts.</p><ul><li><b>Nada Tunggal:</b> Setiap tuts membunyikan satu nada. Nada yang Anda mainkan akan <b>direkam</b> secara otomatis, termasuk durasi dan waktu antar nada (tempo).</li><li>Pilih <b>oktaf</b> (3, 4, atau 5) dan <b>instrumen</b> (8 pilihan).</li><li>Atur <b>Reverb</b>, <b>Delay</b>, dan <b>Amplifier</b> untuk efek suara.</li></ul><p><b>💡 Tombol "Mayor" dan "Minor" akan memutar ulang melodi yang telah Anda rekam dengan durasi dan tempo yang sama persis!</b></p>` },
+            { title: "🎹 Keyboard — Mode Akord", content: `<p>Pilih mode <b>Akord</b> untuk memainkan akord triad.</p><ul><li><b>Rentang akord:</b> C2 – B#3 (20 nada).</li><li><b>Tuts putih</b> = akord <b>Mayor</b>, <b>tuts hitam</b> = akord <b>Minor</b>.</li><li>Akord akan <b>sustain</b> (terus berbunyi) hingga Anda menekan akord lain atau menekan tombol Stop/Reset.</li><li>Akord selalu menggunakan suara <b>Piano</b> (statis) untuk iringan yang stabil.</li><li><b>Akord dapat mengiringi melodi:</b> saat melodi sedang diputar, beralih ke mode Akord dan tekan tuts akord – melodi tetap berbunyi.</li><li><b>Keyboard otomatis fokus ke C2-B#3 saat melodi diputar</b> agar lebih mudah mengakses tuts akord (tidak termasuk C3 dan D3).</li><li><b>Tombol Mayor/Minor otomatis mengaktifkan mode Akord</b>, dan setelah selesai kembali ke Nada Tunggal.</li></ul><p><b>💡 Nada tunggal di luar rentang dapat dimainkan sebagai melodi tanpa menghentikan akord.</b></p>` },
+            { title: "🎵 AI Composer", content: `<p>Tab ini memungkinkan Anda menciptakan melodi otomatis.</p><ul><li><b>Mode Deskripsi:</b> Tulis deskripsi (misal: "melodi romantis yang perlahan"), pilih mood & skala, lalu klik <b>Generate</b>.</li><li><b>Mode Prompt AI:</b> Masukkan <b>OpenAI API Key</b> dan prompt spesifik. AI GPT-3.5 akan menghasilkan notasi nada.</li><li>Hasil melodi dapat diputar, dihentikan, atau dihapus.</li></ul>` },
+            { title: "🎤 AI Transcriber", content: `<p>Rekam audio dari mikrofon dan transkripsi menjadi notasi 20 nada per oktaf.</p><ul><li>Klik tombol 🎤 untuk mulai merekam (maks. 22 menit).</li><li>Pilih algoritma: <b>Standar</b> (autokorelasi) atau <b>Improved (YIN)</b> (lebih akurat).</li><li>Atur <b>Mode</b> (Vokal, Instrumental, Full Range) dan <b>Sensitivitas</b>.</li><li>Setelah rekaman selesai, klik <b>AI Transcribe</b> untuk melihat hasil.</li><li>Hasil transkripsi dapat diputar ulang dengan tombol <b>Play Hasil</b>.</li></ul>` },
+            { title: "🎶 Chord Progression Generator", content: `<p>Analisis progresi akord dari hasil transkripsi.</p><ul><li>Masukkan urutan nada (misal: <code>E3 → G3 → H3 → E4 → G4 → H4</code>) ke dalam kotak input.</li><li>Pilih mode analisis: <b>Otomatis</b>, <b>Mayor</b>, atau <b>Minor</b>.</li><li>Pilih jumlah akord yang ditampilkan (4, 6, atau 8).</li><li>Klik <b>Generate Progresi</b> untuk melihat akord-akord yang terbentuk beserta notasi Romawi.</li></ul>` },
+            { title: "📖 Informasi & Referensi", content: `<p>Panel <b>Informasi & Referensi</b> di bagian bawah menyediakan:</p><ul><li><b>Teori</b>: dasar sistem 12-TET 20 nada per oktaf.</li><li><b>Frekuensi</b>: tabel frekuensi nada di oktaf 4.</li><li><b>Skala</b>: mayor dan minor dengan interval.</li><li><b>Akord</b>: referensi pembentukan akord.</li><li><b>Simulasi Lagu</b>: konversi lagu KJ 33 ke sistem 12-TET.</li><li><b>Tentang</b>: informasi aplikasi dan penulis.</li></ul><p>Gunakan tab-tab ini untuk memahami teori di balik sistem musik baru ini.</p>` },
+            { title: "🎯 Selesai!", content: `<p>Anda sekarang siap menjelajahi <b>PMD Musik 12 TET</b>!</p><p>Semoga aplikasi ini menginspirasi eksplorasi musik mikrotonal Anda.</p><p><b>Selamat berkarya! 🎵</b></p>` }
+        ];
+
+        let tutorialStep = 0;
+        let tutorialOverlay = null;
+
+        function startTutorial() {
+            if (tutorialOverlay) return;
+            tutorialStep = 0;
+            createTutorialOverlay();
+        }
+
+        function createTutorialOverlay() {
+            const overlay = document.createElement('div');
+            overlay.className = 'tutorial-overlay';
+            overlay.id = 'tutorialOverlay';
+            const container = document.createElement('div');
+            container.className = 'tutorial-container';
+            container.innerHTML = `
+                <button class="tutorial-close" id="tutorialCloseBtn">&times;</button>
+                <h2 id="tutorialTitle">${tutorialData[0].title}</h2>
+                <div class="tutorial-content" id="tutorialContent">${tutorialData[0].content}</div>
+                <div class="tutorial-nav">
+                    <span class="step-indicator" id="tutorialStepIndicator">Langkah 1 dari ${tutorialData.length}</span>
+                    <div class="btn-group">
+                        <button class="prev-btn" id="tutorialPrevBtn">← Sebelumnya</button>
+                        <button class="next-btn" id="tutorialNextBtn">Selanjutnya →</button>
+                        <button class="done-btn" id="tutorialDoneBtn" style="display:none;">Selesai</button>
+                    </div>
+                </div>
+                <div class="tutorial-dots" id="tutorialDots">
+                    ${tutorialData.map((_, i) => `<span class="${i===0?'active':''}"></span>`).join('')}
+                </div>
+            `;
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            tutorialOverlay = overlay;
+            document.getElementById('tutorialCloseBtn').addEventListener('click', closeTutorial);
+            document.getElementById('tutorialPrevBtn').addEventListener('click', () => navigateTutorial(-1));
+            document.getElementById('tutorialNextBtn').addEventListener('click', () => navigateTutorial(1));
+            document.getElementById('tutorialDoneBtn').addEventListener('click', closeTutorial);
+            document.addEventListener('keydown', handleEscape);
+            updateTutorialStep();
+        }
+
+        function updateTutorialStep() {
+            const data = tutorialData[tutorialStep];
+            document.getElementById('tutorialTitle').textContent = data.title;
+            document.getElementById('tutorialContent').innerHTML = data.content;
+            document.getElementById('tutorialStepIndicator').textContent = `Langkah ${tutorialStep+1} dari ${tutorialData.length}`;
+            document.getElementById('tutorialPrevBtn').style.display = tutorialStep === 0 ? 'none' : 'inline-block';
+            document.getElementById('tutorialNextBtn').style.display = tutorialStep === tutorialData.length - 1 ? 'none' : 'inline-block';
+            document.getElementById('tutorialDoneBtn').style.display = tutorialStep === tutorialData.length - 1 ? 'inline-block' : 'none';
+            const dots = document.querySelectorAll('#tutorialDots span');
+            dots.forEach((dot, i) => { dot.className = i === tutorialStep ? 'active' : ''; });
+        }
+
+        function navigateTutorial(delta) {
+            const newStep = tutorialStep + delta;
+            if (newStep < 0 || newStep >= tutorialData.length) return;
+            tutorialStep = newStep;
+            updateTutorialStep();
+        }
+
+        function closeTutorial() {
+            if (tutorialOverlay) { tutorialOverlay.remove(); tutorialOverlay = null; document.removeEventListener('keydown', handleEscape); }
+        }
+
+        function handleEscape(e) { if (e.key === 'Escape') closeTutorial(); }
+
+        document.getElementById('tutorialBtn').addEventListener('click', startTutorial);
+
+        // ================================================================
+        // INISIALISASI
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            octaveSelector.value = '4';
+            buildKeyboard(4);
+            renderTab('teori');
+            playMode = 'single';
+            singleModeLabel.classList.add('active-mode');
+            modeIndicator.textContent = '🎵 Mode: Tunggal';
+            instrumentSelector.value = 'organ';
+            currentInstrument = 'organ';
+            reverbSlider.value = 20;
+            reverbVal.textContent = '20%';
+            delaySlider.value = 0;
+            delayVal.textContent = '0%';
+            ampSlider.value = 100;
+            ampVal.textContent = '1.0x';
+            aiDescArea.classList.add('show');
+            aiPromptArea.classList.remove('show');
+            aiDescModeLabel.classList.add('active-ai-mode');
+            aiPromptModeLabel.classList.remove('active-ai-mode');
+            const statusElLocal = document.getElementById('status');
+            if (statusElLocal) statusElLocal.textContent = '🔴 Klik tombol mikrofon untuk mulai merekam (maks. 22 menit)';
+            resizeWaveformCanvas();
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({ name: 'microphone' }).then(result => {
+                    if (result.state === 'denied') {
+                        const err = document.getElementById('errorMessage');
+                        if (err) { err.classList.add('show'); document.getElementById('errorText').textContent = 'Izin mikrofon telah ditolak. Mohon izinkan akses mikrofon di pengaturan browser.'; }
+                    }
+                }).catch(() => {});
+            }
+            console.log('🎵 PMD Musik 12-TET siap!');
+            console.log('📊 A4 = 440 Hz (acuan)');
+            console.log('📝 Tombol Mayor/Minor memutar ulang melodi yang direkam.');
+            console.log('🎤 AI Transcriber dengan mikrofon dan deteksi pitch siap digunakan.');
+            console.log('📖 Tutorial siap dibuka dengan tombol Tutorial.');
+        });
+
+        // ================================================================
+        // PARTITUR NOTASI ANGKA (LANGSUNG DI INDEX.HTML)
+        // ================================================================
+        const NOTES_20_PARTITUR = ['E','E#','F','F#','G','G#','H','H#','I','J','J#','K','K#','A','A#','B','B#','C','C#','D'];
+        const MAYOR_INTERVALS_P = [2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1];
+        const MINOR_INTERVALS_P = [2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 2];
+
+        let akordList = [];
+
+        // ================================================================
+        // FUNGSI INSERT SIMBOL (MENEMPEL DI POSISI KURSOR)
+        // ================================================================
+        function insertSymbol(symbol) {
+            const area = document.getElementById('partitur-area');
+            if (!area) return;
+            
+            // Ambil posisi kursor
+            const start = area.selectionStart;
+            const end = area.selectionEnd;
+            
+            // Sisipkan simbol tepat di posisi kursor
+            area.value = area.value.substring(0, start) + symbol + area.value.substring(end);
+            
+            // Fokuskan kembali ke textarea
+            area.focus();
+            
+            // Set kursor ke posisi setelah simbol yang baru disisipkan
+            const newPos = start + symbol.length;
+            area.setSelectionRange(newPos, newPos);
+        }
+
+        // ================================================================
+        // FUNGSI AKORD 20 NADA (E, E#, F, F#, ..., D)
+        // ================================================================
+        function generateScalePartitur(nadaDasar, mayorMinor) {
+            const rootIdx = NOTES_20_PARTITUR.indexOf(nadaDasar);
+            if (rootIdx === -1) return [];
+            const intervals = mayorMinor === "mayor" ? MAYOR_INTERVALS_P : MINOR_INTERVALS_P;
+            let scale = [NOTES_20_PARTITUR[rootIdx]];
+            let currentIndex = rootIdx;
+            for (let interval of intervals) {
+                currentIndex = (currentIndex + interval) % 20;
+                scale.push(NOTES_20_PARTITUR[currentIndex]);
+            }
+            return scale.slice(0, 11); // Ambil 11 nada pertama untuk akord
+        }
+
+        function buildChord20Partitur(rootName, type) {
+            const rootIdx = NOTES_20_PARTITUR.indexOf(rootName);
+            if (rootIdx === -1) return [];
+            let third = 4;
+            let fifth = 7;
+            if (type === 'minor') third = 3;
+            if (type === 'diminished') { third = 3; fifth = 6; }
+            return [NOTES_20_PARTITUR[rootIdx], NOTES_20_PARTITUR[(rootIdx + third) % 20], NOTES_20_PARTITUR[(rootIdx + fifth) % 20]];
+        }
+
+        function initPartiturEvents() {
+            const tampilkanBtn = document.getElementById('tampilkan-akord');
+            if (tampilkanBtn) {
+                tampilkanBtn.addEventListener('click', function() {
+                    const nadaDasar = document.getElementById('nada-dasar').value;
+                    const mayorMinor = document.getElementById('mayor-minor').value;
+                    const skala = generateScalePartitur(nadaDasar, mayorMinor);
+                    let progresi = mayorMinor === "mayor" ? ["", "m", "m", "", "", "m", "dim"] : ["m", "dim", "", "m", "m", "", ""];
+                    akordList = [];
+                    for (let i = 0; i < skala.length; i++) {
+                        const chordNotes = buildChord20Partitur(skala[i], progresi[i]);
+                        let akordName = chordNotes[0];
+                        if (progresi[i] === 'minor') akordName += 'm';
+                        if (progresi[i] === 'diminished') akordName += '°';
+                        akordList.push(akordName);
+                    }
+                    const selectAkord = document.getElementById('pilih-akord');
+                    if (selectAkord) {
+                        selectAkord.innerHTML = '<option value="">-- Pilih Akord --</option>';
+                        akordList.forEach(akord => {
+                            const option = document.createElement('option');
+                            option.value = akord;
+                            option.textContent = akord;
+                            selectAkord.appendChild(option);
+                        });
+                        selectAkord.disabled = false;
+                    }
+                });
+            }
+            const pilihAkord = document.getElementById('pilih-akord');
+            if (pilihAkord) {
+                pilihAkord.addEventListener('change', function() {
+                    if (this.value) { insertSymbol(this.value + ' '); }
+                });
+            }
+            
+            // Bebaskan spasi normal
+            const area = document.getElementById('partitur-area');
+            if (area) { area.onkeydown = null; }
+        }
+
+        // ================================================================
+        // FUNGSI SIMPAN & BUKA DENGAN PEMILIHAN FOLDER (FILE PICKER)
+        // ================================================================
+        async function simpanPartitur() {
+            const partitur = document.getElementById('partitur-area').value;
+            const blob = new Blob([partitur], { type: 'text/plain' });
+            
+            // Cek apakah browser mendukung File System Access API
+            if (window.showSaveFilePicker) {
+                try {
+                    const handle = await window.showSaveFilePicker({
+                        suggestedName: 'partitur.txt',
+                        types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }]
+                    });
+                    const writable = await handle.createWritable();
+                    await writable.write(blob);
+                    await writable.close();
+                    tampilkanPesanPartitur("Partitur berhasil disimpan di folder pilihan Anda!", "green");
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        tampilkanPesanPartitur("Gagal menyimpan: " + err.message, "red");
+                    }
+                }
+            } else {
+                // Fallback: Download otomatis
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'partitur.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+                tampilkanPesanPartitur("Partitur berhasil diunduh (browser tidak mendukung pilih folder).", "green");
+            }
+        }
+
+        async function bukaPartitur() {
+            // Cek apakah browser mendukung File System Access API
+            if (window.showOpenFilePicker) {
+                try {
+                    const [handle] = await window.showOpenFilePicker({
+                        types: [{ description: 'Text file', accept: { 'text/plain': ['.txt'] } }]
+                    });
+                    const file = await handle.getFile();
+                    const content = await file.text();
+                    document.getElementById('partitur-area').value = content;
+                    tampilkanPesanPartitur("Partitur berhasil dibuka dari folder pilihan Anda!", "blue");
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        tampilkanPesanPartitur("Gagal membuka: " + err.message, "red");
+                    }
+                }
+            } else {
+                // Fallback: Gunakan input file
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.txt';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            document.getElementById('partitur-area').value = event.target.result;
+                            tampilkanPesanPartitur("Partitur berhasil dibuka!", "blue");
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                input.click();
+            }
+        }
+
+        // ================================================================
+        // FUNGSI CETAK & BERSIHKAN
+        // ================================================================
+        function cetakPartitur() {
+            const area = document.getElementById('partitur-area');
+            const partiturText = area.value;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<pre style="font-size: 16px; font-family: Courier New;">' + partiturText.replace(/</g, '&lt;') + '</pre>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function bersihkanPartitur() {
+            if (confirm("Yakin ingin menghapus semua isi partitur?")) {
+                document.getElementById('partitur-area').value = '';
+                tampilkanPesanPartitur("Partitur dibersihkan.", "black");
+            }
+        }
+
+        function tampilkanPesanPartitur(msg, warna) {
+            const statusDiv = document.getElementById('status-message');
+            if (!statusDiv) return;
+            statusDiv.textContent = msg;
+            statusDiv.style.color = warna;
+            setTimeout(() => { statusDiv.textContent = ""; }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initPartiturEvents();
+        });
+    </script>
+</body>
+</html>
